@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cube Evaders</title>
-    <link href="https://fonts.googleapis.com/css2?family=Righteous&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden;
@@ -75,6 +75,160 @@
             color: white; text-shadow: 2px 2px 0px #000; background: rgba(0,0,0,0.5); padding: 10px; border-radius: 5px; pointer-events: none; z-index: 30; text-align: center;
         }
     </style>
+    <style>
+        :root { --gd: 'Lilita One', 'Righteous', cursive;
+            --ol: -3px -3px 0 #000, 3px -3px 0 #000, -3px 3px 0 #000, 3px 3px 0 #000, 0 -3px 0 #000, 0 3px 0 #000, -3px 0 0 #000, 3px 0 0 #000;
+            --olh: 6px 0 0 #000, -6px 0 0 #000, 0 6px 0 #000, 0 -6px 0 #000, 5px 3px 0 #000, -5px 3px 0 #000, 5px -3px 0 #000, -5px -3px 0 #000, 3px 5px 0 #000, -3px 5px 0 #000, 3px -5px 0 #000, -3px -5px 0 #000; }
+        body, html, .btn, .tool-btn { font-family: var(--gd); }
+        .ui-screen { background: linear-gradient(#2a6cff, #1a3fd0); }
+        .ui-screen::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 18vh; z-index: -1; border-top: 4px solid #fff; box-shadow: 0 -4px 22px rgba(255,255,255,.55); background: repeating-linear-gradient(90deg, transparent 0 78px, rgba(0,0,60,.35) 78px 80px), linear-gradient(#1d4fe0, #0a2a8a); animation: gdScroll 1.1s linear infinite; }
+        #pauseUI::after, #levelCodeUI::after { display: none; }
+        @keyframes gdScroll { to { background-position: -80px 0, 0 0; } }
+        h1 { font-size: clamp(44px, 9vw, 96px); font-weight: 400; text-shadow: var(--olh); margin: 0 0 10px; }
+        h2 { font-weight: 400; text-shadow: var(--ol); }
+        .btn { background: #5fdc1a; color: #fff; border: 4px solid #000; border-radius: 12px; padding: 14px 38px; font-size: 26px; letter-spacing: 1px; text-shadow: var(--ol); box-shadow: none; transition: transform .08s; }
+        .btn:hover { filter: brightness(1.12); transform: scale(1.06); box-shadow: none; }
+        .btn:active { transform: scale(.94); box-shadow: none; }
+        .btn-blue { background: #2ec4f2; }
+        .btn-red { background: #e8442f; }
+        .mod-btn { background: #555; text-shadow: none; }
+        #btnPlayMain { font-size: 44px; padding: 20px 64px; }
+        .lvl-btn { min-width: 280px; line-height: 1.1; }
+        .lvl-btn small { font-size: 18px; }
+        #progressBarBg { top: 14px; width: min(46vw, 480px); height: 14px; border: 2px solid #000; border-radius: 3px; background: rgba(0,0,0,.45); overflow: visible; }
+        #progressBarFill { background: #5fdc1a; transition: none; }
+        #progressText { position: absolute; left: calc(100% + 12px); top: 50%; transform: translateY(-50%); font-size: 24px; text-shadow: var(--ol); }
+        #attemptDisplay { display: none; }
+        #coinDisplay { font-size: 26px; font-weight: 400; text-shadow: var(--ol); }
+    </style>
+<style>
+        .ui-screen { background: var(--panels) left top / auto 72% repeat-x, #2fb229; }
+        .ui-screen::after { height: 28vh; border-top: 3px solid #fff; box-shadow: 0 -2px 10px rgba(255,255,255,.6); background: repeating-linear-gradient(90deg, transparent 0 calc(24vh - 17px), rgba(130,255,80,.3) calc(24vh - 17px) 24vh), linear-gradient(#2a9a22, #1a7a1a 20%, #0d4a10); animation: gdScroll2 2.4s linear infinite; }
+        @keyframes gdScroll2 { to { background-position: -24vh 0, 0 0; } }
+        #mainMenu { justify-content: flex-start; padding-top: 7vh; box-sizing: border-box; }
+        #gameTitle { font-family: 'Press Start 2P', monospace; font-size: clamp(20px, 4.4vw, 62px); line-height: 1.2; margin: 0; text-align: center; color: transparent; background: linear-gradient(#d5ff7a, #8be832 50%, #3fae1c); -webkit-background-clip: text; background-clip: text; text-shadow: none; filter: drop-shadow(3px 0 0 #fff) drop-shadow(-3px 0 0 #fff) drop-shadow(0 3px 0 #fff) drop-shadow(0 -3px 0 #fff) drop-shadow(4px 0 0 #000) drop-shadow(-4px 0 0 #000) drop-shadow(0 4px 0 #000) drop-shadow(0 -4px 0 #000) drop-shadow(5px 7px 3px rgba(0,0,0,.4)); }
+        .menu-main { display: flex; align-items: center; gap: 6vh; margin-top: 12vh; }
+        .plus { background: none; border: 0; padding: 0; outline: none; cursor: pointer; filter: drop-shadow(0 .8vh .6vh rgba(0,0,0,.35)); transition: transform .08s; }
+        .plus:hover { transform: scale(1.07); } .plus:active { transform: scale(.94); }
+        .plus.lg { width: 31vh; height: 31vh; } .plus.sm { width: 20vh; height: 20vh; }
+        .plus svg { width: 100%; height: 100%; overflow: visible; }
+        .btn { background: linear-gradient(#a8ff52, #38b81d); border: 3px solid #fff; border-radius: 18px; box-shadow: 0 0 0 4px #000, 0 1vh 1.2vh rgba(0,0,0,.35); }
+        .btn:hover, .btn:active { box-shadow: 0 0 0 4px #000, 0 1vh 1.2vh rgba(0,0,0,.35); }
+        .btn-blue { background: linear-gradient(#7cf3ff, #1fa9d8); }
+        .btn-red { background: linear-gradient(#ff9a7a, #d8301c); }
+        .mod-btn { background: linear-gradient(#999, #4a4a4a); }
+        #progressBarBg { top: 1.2vh; width: min(36.5vw, 66vh); height: 2.8vh; box-sizing: border-box; border: 3px solid #fff; border-radius: 99px; background: #0b1175; overflow: visible; }
+        #progressBarFill { border-radius: 99px; background: #46a4ff; }
+        #progressText { left: calc(100% + 1.4vw); font-size: 3.6vh; }
+    </style>
+<style>
+        .ui-screen { background: none; }
+        .ui-screen::before { content: ''; position: absolute; inset: 0; z-index: -2; background: var(--panels) left top / auto 72% repeat-x, #2fb229; animation: hueCycle 48s linear infinite; }
+        .ui-screen::after { animation: gdScroll2 2.4s linear infinite, hueCycle 48s linear infinite; }
+        @keyframes hueCycle { from { filter: hue-rotate(0deg); } to { filter: hue-rotate(360deg); } }
+        #pauseUI::before, #levelCodeUI::before, #publishUI::before, #publishUI::after { display: none; }
+        #editorUI { flex-wrap: wrap; justify-content: center; max-width: 98vw; row-gap: 6px; }
+        #trigBar { align-items: center; gap: 6px; }
+        #trigBar input[type=color] { width: 36px; height: 30px; padding: 0; border: 2px solid #fff; border-radius: 6px; background: none; cursor: pointer; }
+        #trigBar input[type=number] { width: 52px; font-family: inherit; border-radius: 6px; border: 2px solid #fff; background: #222; color: #fff; padding: 3px; }
+        .trig-f { color: #fff; font-size: 12px; display: flex; align-items: center; gap: 4px; }
+        .pub-card { position: relative; overflow: hidden; background: #a0612a; border: 5px solid #2e1a0a; border-radius: 16px; box-shadow: inset 0 0 0 4px #c98a45, 0 1.5vh 3vh rgba(0,0,0,.5); padding: 3vh 3.5vw; width: min(560px, 90vw); display: flex; flex-direction: column; gap: 1.6vh; box-sizing: border-box; }
+        .pub-card h2 { margin: 0; text-align: center; font-size: 4vh; }
+        .pub-f { display: flex; flex-direction: column; gap: .6vh; color: #fff; font-size: 2.2vh; text-shadow: var(--ol); }
+        .pub-f input, .pub-f textarea { font-family: var(--gd); font-size: 2.2vh; padding: 1vh 1.2vw; background: #5a3416; color: #ffe2b8; border: 3px solid #2e1a0a; border-radius: 8px; resize: none; text-shadow: none; opacity: 1; }
+        .pub-chips { display: flex; gap: 1vw; }
+        .chip { padding: .6vh 1.4vw; border: 3px solid #2e1a0a; border-radius: 99px; background: #5a3416; color: #c9a37a; font-size: 2vh; text-shadow: none; }
+        .chip.on { background: #7dff2a; color: #123; }
+        .pub-stats { color: #ffe2b8; font-size: 2vh; text-align: center; background: rgba(0,0,0,.25); border-radius: 8px; padding: 1vh; }
+        .pub-ribbon { position: absolute; top: 3.6vh; right: -7vw; width: 22vw; min-width: 190px; text-align: center; transform: rotate(35deg); background: #ffd400; color: #000; border: 3px solid #000; font-size: 2.2vh; padding: .5vh 0; letter-spacing: 1px; z-index: 2; }
+        .pub-dis, .pub-dis:hover { filter: grayscale(.85); opacity: .65; cursor: not-allowed; transform: none; }
+        .pub-dis small { font-size: 14px; }
+    </style>
+<style>
+        #editorUI { pointer-events: none; top: 0; left: 0; transform: none; width: 100vw; height: 100vh; max-width: none; padding: 0; gap: 0; background: none; border: 0; border-radius: 0; display: block; z-index: 10; }
+        #editorUI * { pointer-events: none; }
+        #editorUI button, #editorUI input, #editorUI label, #editorUI .ed-bottom { pointer-events: auto; }
+        #editorUI.uioff .ed-bottom, #editorUI.uioff .ed-right, #editorUI.uioff .ed-left, #editorUI.uioff .ed-top > :not(#edEye) { display: none; }
+        #editorControlsText { bottom: auto; top: 13vh; z-index: 42; }
+        :root { --k: 2.8px; --thumb: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M3 16l8-8v5h10V8l8 8-8 8v-5H11v5z' fill='%23fff' stroke='%23000' stroke-width='1.6'/%3E%3C/svg%3E") center / 64% no-repeat, radial-gradient(circle at 35% 28%, #b8ff5a, #2fae14 72%); }
+        .gb { width: 8vh; height: 8vh; flex: none; border-radius: 50%; border: .45vh solid #fff; box-shadow: 0 0 0 .4vh #000, 0 .6vh .8vh rgba(0,0,0,.4); background: radial-gradient(circle at 35% 28%, #b8ff5a, #2fae14 72%); display: grid; place-items: center; padding: 0; cursor: pointer; color: #fff; font-family: var(--gd); font-size: 3vh; text-shadow: var(--ol); }
+        .gb svg { width: 58%; height: 58%; }
+        .gb.lg { width: 11vh; height: 11vh; } .gb.sm { width: 6.6vh; height: 6.6vh; font-size: 1.6vh; }
+        .gb.dim { background: radial-gradient(circle at 35% 28%, #7f8f7f, #36443a 72%); }
+        .gb.sq { border-radius: 1.3vh; width: 9vh; height: 9vh; }
+        .gb.on { background: radial-gradient(circle at 35% 28%, #b8ff5a, #2fae14 72%); }
+        .gb.sm:not(.on) { background: radial-gradient(circle at 35% 28%, #7f8f7f, #36443a 72%); }
+        .ed-top { position: absolute; top: 1.2vh; left: 1.2vw; right: 1.2vw; display: flex; align-items: center; gap: 1.6vh; }
+        #edScrub { -webkit-appearance: none; appearance: none; flex: 0 0 34vw; height: 2.4vh; margin: 0 0 0 5vw; border: .4vh solid #fff; border-radius: 99px; background: #0b1175; outline: none; }
+        #edScrub::-webkit-slider-thumb { -webkit-appearance: none; width: 8.4vh; height: 8.4vh; border-radius: 50%; border: .45vh solid #fff; box-shadow: 0 0 0 .4vh #000; background: var(--thumb); cursor: pointer; }
+        #edScrub::-moz-range-thumb { width: 8.4vh; height: 8.4vh; border-radius: 50%; border: .45vh solid #fff; box-shadow: 0 0 0 .4vh #000; background: var(--thumb); cursor: pointer; }
+        #edGrid { margin-left: auto; }
+        .ed-left { position: absolute; left: 1.4vw; top: 22vh; }
+        .ed-right { position: absolute; right: 1.4vw; top: 15vh; display: grid; grid-template-columns: repeat(3, 7vh); gap: 1.1vh; }
+        .rb { height: 7vh; border-radius: 1vh; border: .4vh solid #fff; box-shadow: 0 0 0 .35vh #000; color: #fff; font-family: var(--gd); font-size: 1.4vh; line-height: 1.05; text-shadow: var(--ol); cursor: pointer; padding: 0; }
+        .rb.stub { opacity: .45; filter: grayscale(.4); cursor: not-allowed; }
+        .ed-bottom { position: absolute; left: 0; right: 0; bottom: 0; height: calc(var(--k) * 100); background: linear-gradient(#06060f, #17171f); border-top: .4vh solid #000; display: flex; align-items: center; gap: calc(var(--k) * 6); padding: 0 1.2vw; box-sizing: border-box; }
+        .ed-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: calc(var(--k) * 4); flex: none; }
+        .tab { width: calc(var(--k) * 38); height: calc(var(--k) * 38); border-radius: calc(var(--k) * 5); border: .4vh solid #fff; box-shadow: 0 0 0 .35vh #000; background: linear-gradient(#8a8a8a, #4a4a4a); color: #fff; font-family: var(--gd); font-size: calc(var(--k) * 8); text-shadow: var(--ol); cursor: pointer; padding: 0; }
+        .tab.on { background: linear-gradient(#7ffcff, #16b4cf); }
+        .cat-row { display: flex; gap: calc(var(--k) * 2); }
+        .bcol { display: flex; flex-direction: column; gap: calc(var(--k) * 4); }
+        .cat { width: calc(var(--k) * 30); height: calc(var(--k) * 20); border-radius: 8px; border: 3px solid #fff; background: #4a4a56; padding: 2px; cursor: pointer; }
+        .cat.on { background: #0b0b12; }
+        .cat svg, .ob svg { width: 100%; height: 100%; display: block; }
+        .ed-panel { flex: 1; display: flex; align-items: center; gap: calc(var(--k) * 6); min-width: 0; }
+        .ob-grid { display: grid; grid-template-columns: repeat(7, calc(var(--k) * 28)); grid-auto-rows: calc(var(--k) * 28); gap: calc(var(--k) * 3); }
+        .ob { border-radius: 8px; border: 3px solid #fff; box-shadow: 0 0 0 2px #000; background: linear-gradient(#5a5a5a, #2c2c2c); padding: 4px; cursor: pointer; }
+        .ob.on { background: linear-gradient(#7ffcff, #16b4cf); }
+        #trigSet { display: flex; flex-direction: column; gap: calc(var(--k) * 3); color: #fff; font-size: calc(var(--k) * 6.5); }
+        #trigSet label { display: flex; align-items: center; justify-content: space-between; gap: 6px; text-shadow: var(--ol); }
+        #trigSet input[type=color] { width: calc(var(--k) * 16); height: calc(var(--k) * 12); padding: 0; border: 2px solid #fff; border-radius: 6px; background: none; }
+        #trigSet input[type=number] { width: calc(var(--k) * 22); font-family: inherit; border-radius: 6px; border: 2px solid #fff; background: #222; color: #fff; padding: 2px; }
+        .kb { width: calc(var(--k) * var(--s, 30)); height: calc(var(--k) * var(--s, 30)); border-radius: calc(var(--k) * 4); border: .4vh solid #fff; box-shadow: 0 0 0 .35vh #000; background: linear-gradient(#a8ff52, #38b81d); color: #fff; font-family: var(--gd); font-size: calc(var(--k) * 8); line-height: 1; text-shadow: var(--ol); cursor: pointer; padding: 0; }
+        .kb.gray { background: linear-gradient(#9a9a9a, #565656); }
+        .kb.on { background: linear-gradient(#7ffcff, #16b4cf); }
+        .kb.stub { opacity: .45; filter: grayscale(.5); cursor: not-allowed; }
+        .kb svg { width: 60%; height: 60%; }
+        .kbg { display: flex; gap: calc(var(--k) * 3); }
+        .ed-big { margin-left: auto; display: grid; grid-template-columns: 1fr 1fr; gap: calc(var(--k) * 3); flex: none; }
+        .ed-big .kb { --s: 44; font-size: calc(var(--k) * 9); }
+        .pad { display: grid; grid-template-columns: repeat(3, calc(var(--k) * 28)); grid-template-rows: repeat(3, calc(var(--k) * 26)); align-items: center; justify-items: center; }
+        .pad .arrow { width: 100%; height: 100%; background: none; border: 0; box-shadow: none; padding: 2px; }
+        .pad .arrow svg { width: 100%; height: 100%; }
+        #stepTxt { color: #fff; font-size: calc(var(--k) * 12); cursor: pointer; text-shadow: var(--ol); pointer-events: auto; }
+        #selInfo, .hint { color: #fff; font-size: calc(var(--k) * 8); text-shadow: var(--ol); }
+        .lv-list { width: min(780px, 92vw); max-height: 50vh; overflow: auto; background: #a0612a; border: .6vh solid #2e1a0a; border-radius: 1.8vh; box-shadow: inset 0 0 0 .5vh #c98a45; padding: 1.6vh; display: flex; flex-direction: column; gap: 1.2vh; box-sizing: border-box; margin: 3vh 0; }
+        .lv-row { display: flex; align-items: center; gap: 1vw; background: #7a4720; border: .4vh solid #2e1a0a; border-radius: 1.2vh; padding: 1vh 1vw; }
+        .lv-name { flex: 1; min-width: 0; font-family: var(--gd); font-size: 3.2vh; padding: .6vh 1vw; background: #5a3416; color: #ffe2b8; border: .35vh solid #2e1a0a; border-radius: 1vh; }
+        .lv-info { color: #ffe2b8; font-size: 2.2vh; white-space: nowrap; }
+        .lv-empty { color: #ffe2b8; font-size: 3vh; text-align: center; padding: 3vh; }
+        .btn.sm { font-size: 2.6vh; padding: .7vh 1.3vw; border-width: .3vh; border-radius: 1.2vh; box-shadow: 0 0 0 .3vh #000; letter-spacing: 0; }
+        .btn.gray { background: linear-gradient(#c4c4c4, #6a6a6a); }
+        .ov { position: fixed; inset: 0; z-index: 40; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,.6); }
+        .pm-col { display: flex; flex-direction: column; gap: 2.4vh; width: min(52vw, 640px); }
+        .pm-col .btn { width: 100%; font-size: 5vh; color: #ffb21a; padding: .7vh 0; border-radius: 1.2vh; }
+        .pm-side { position: absolute; right: 2vw; top: 3vh; display: flex; flex-direction: column; gap: 1.4vh; width: min(24vw, 340px); }
+        .sb { display: flex; justify-content: space-between; align-items: center; background: linear-gradient(#8f96c4, #5a608f); border: .4vh solid #fff; box-shadow: 0 0 0 .35vh #000; border-radius: 1.2vh; color: #fff; font-family: var(--gd); font-size: 2.8vh; padding: .9vh 1vw; text-shadow: var(--ol); cursor: pointer; }
+        .ed-stats { position: absolute; left: 2vw; top: 2.5vh; color: #ffb21a; font-size: 3.8vh; line-height: 1.5; text-shadow: var(--ol); }
+        .pm-sliders { position: absolute; bottom: 2.5vh; left: 4vw; right: 4vw; display: flex; justify-content: space-around; }
+        .pm-sliders label { display: flex; flex-direction: column; align-items: center; color: #fff; font-size: 3.2vh; text-shadow: var(--ol); width: 26vw; }
+        .pm-sliders input { width: 100%; accent-color: #f4c430; }
+        .set-card { position: relative; width: min(94vw, 1180px); display: grid; grid-template-columns: 16% 1fr 16%; gap: 2vw; background: #9b5a32; border: .6vh solid #fff; border-radius: 2vh; box-shadow: 0 0 0 .5vh #000; padding: 3vh 2vw 10vh; box-sizing: border-box; }
+        .set-l, .set-r { display: flex; flex-direction: column; align-items: center; gap: 1.2vh; }
+        .set-m { display: flex; flex-direction: column; align-items: center; gap: 1.6vh; }
+        .lbl { color: #ffb21a; font-size: 3.4vh; text-shadow: var(--ol); } .lbl.big { font-size: 4.8vh; }
+        .sws { display: flex; gap: 1.2vw; } .sws label { display: flex; flex-direction: column; align-items: center; color: #ffb21a; font-size: 2.4vh; text-shadow: var(--ol); }
+        .sws input[type=color] { width: 7vh; height: 7vh; padding: 0; border: .45vh solid #fff; border-radius: 1.2vh; box-shadow: 0 0 0 .35vh #000; background: none; cursor: pointer; }
+        .sws .d { opacity: .5; }
+        .set-m .row { display: flex; gap: 2vw; }
+        .song { display: flex; justify-content: space-between; align-items: center; width: 100%; box-sizing: border-box; background: #6b3c1d; border-radius: 1.4vh; padding: 2.4vh 2vw; color: #fff; font-size: 4vh; text-shadow: var(--ol); }
+        .pv { width: 12vh; height: 12vh; border: .45vh solid #000; border-radius: .6vh; } .pv.x { background: #777; }
+        .set-card .ok { position: absolute; bottom: 2vh; left: 50%; transform: translateX(-50%); font-size: 5vh; color: #ffb21a; padding: .5vh 4vw; }
+    </style>
+<style>
+        :root { --ol2: -1.5px -1.5px 0 #000, 1.5px -1.5px 0 #000, -1.5px 1.5px 0 #000, 1.5px 1.5px 0 #000, 0 -1.5px 0 #000, 0 1.5px 0 #000, -1.5px 0 0 #000, 1.5px 0 0 #000; }
+        .rb, .kb, .tab, .gb, .sb, #stepTxt, #selInfo, .hint, #trigSet label, .sws label { text-shadow: var(--ol2); }
+    </style>
 </head>
 <body>
 
@@ -103,6 +257,79 @@
     </div>
 
     <!-- Code Import/Export Menu -->
+    <div id="edPauseUI" class="ov hidden">
+        <div class="ed-stats"><div id="edObjs">Objects: 0/40000</div><div id="edLenTxt">Length: 0 seconds (Tiny)</div></div>
+        <div class="pm-col">
+            <button class="btn" id="pmResume">Resume</button>
+            <button class="btn" id="pmSavePlay">Save and Play</button>
+            <button class="btn" id="pmSaveExit">Save and Exit</button>
+            <button class="btn" id="pmSave">Save</button>
+            <button class="btn" id="pmExit">Exit</button>
+        </div>
+        <div class="pm-side">
+            <button class="sb" id="pmSettings">Settings <span>&#9881;</span></button>
+            <button class="sb" id="pmExport">Export <span>&#8599;</span></button>
+            <button class="sb" id="pmImport">Import <span>&#8601;</span></button>
+            <button class="sb" id="pmESfx">Editor SFX <span id="esfxIco">ON</span></button>
+            <button class="sb" id="pmAuto">Auto-Save <span id="autoIco">ON</span></button>
+            <button class="sb" id="toolPublish">Publish <span>&#9650;</span></button>
+            <button class="sb" id="pmHelp">Help <span>?</span></button>
+        </div>
+        <div class="pm-sliders">
+            <label>Music<input type="range" id="volMusic" min="0" max="2" step="0.1" value="1"></label>
+            <label>SFX<input type="range" id="volSfx" min="0" max="2" step="0.1" value="1"></label>
+            <label>Editor SFX<input type="range" id="volEd" min="0" max="2" step="0.1" value="1"></label>
+        </div>
+    </div>
+
+    <div id="edSettingsUI" class="ov hidden" style="z-index: 45;">
+        <div class="set-card">
+            <div class="set-l">
+                <div class="lbl">Speed:</div><button class="gb sq" id="setSpeed" title="Starting speed"></button>
+                <div class="lbl">Mode:</div><button class="gb sq" id="setMode" title="Starting mode"></button>
+                <div class="lbl">Options:</div><button class="gb dim sq" title="Coming soon">&#9881;</button>
+            </div>
+            <div class="set-m">
+                <div class="lbl big">Select Color:</div>
+                <div class="sws">
+                    <label>BG:<input type="color" id="setBg" value="#3a4bff"></label>
+                    <label>G:<input type="color" id="setGr" value="#0a1ac7"></label>
+                    <label class="d">G2:<input type="color" value="#0a1ac7" disabled></label>
+                    <label class="d">LINE:<input type="color" value="#ffffff" disabled></label>
+                    <label class="d">MG:<input type="color" value="#3a4bff" disabled></label>
+                    <label class="d">MG2:<input type="color" value="#3a4bff" disabled></label>
+                </div>
+                <div class="lbl big">Game Type:</div>
+                <div class="row"><button class="btn">Classic</button><button class="btn gray" title="Coming soon">Platformer</button></div>
+                <div class="lbl big">Select Song:</div>
+                <div class="row"><button class="btn sm">Normal</button><button class="btn sm gray" title="Coming soon">Custom</button></div>
+                <div class="song"><span>&#9664;</span><b>01: Cube Beat</b><span>&#9654;</span></div>
+            </div>
+            <div class="set-r">
+                <div class="lbl">BG:</div><div class="pv" id="pvBg"></div>
+                <div class="lbl">G:</div><div class="pv" id="pvGr"></div>
+                <div class="lbl">MG:</div><div class="pv x"></div>
+                <button class="btn sm gray" title="Coming soon">Font</button>
+            </div>
+            <button class="btn ok" id="setOk">OK</button>
+        </div>
+    </div>
+
+    <div id="publishUI" class="ui-screen hidden" style="z-index: 50; background: rgba(0,0,0,0.78);">
+        <div class="pub-card">
+            <div class="pub-ribbon">COMING SOON</div>
+            <h2>PUBLISH LEVEL</h2>
+            <label class="pub-f">Level name<input value="My Awesome Level" disabled></label>
+            <label class="pub-f">Description<textarea rows="2" disabled>Share your level with players around the world!</textarea></label>
+            <div class="pub-f">Visibility<div class="pub-chips"><span class="chip on">Public</span><span class="chip">Friends</span><span class="chip">Unlisted</span></div></div>
+            <div id="pubStats" class="pub-stats"></div>
+            <div class="menu-row">
+                <button class="btn pub-dis" disabled>Publish<br><small>Coming soon</small></button>
+                <button class="btn btn-red" id="btnClosePublish">Close</button>
+            </div>
+        </div>
+    </div>
+
     <div id="levelCodeUI" class="ui-screen hidden" style="z-index: 50; background: rgba(0,0,0,0.95);">
         <h1 id="levelCodeTitle">LEVEL CODE</h1>
         <textarea id="levelCodeInput" style="width: 80%; max-width: 800px; height: 200px; font-family: monospace; font-size: 16px; margin: 20px; padding: 10px; border-radius: 10px; border: 4px solid #fff; background: #222; color: #00FF00;"></textarea>
@@ -114,64 +341,96 @@
     </div>
 
     <div id="editorUI" class="hidden">
-        <button class="tool-btn active" data-tool="block">Block</button>
-        <button class="tool-btn" data-tool="spike">Spike</button>
-        <button class="tool-btn" data-tool="coin" style="color:#FFD700; border-color:#FFD700;">Coin</button>
-        <button class="tool-btn" id="toolRotate" style="background:#8844FF; color:white;">Rotate: 0°</button>
-        
-        <div class="tool-category">
-            <button class="tool-btn" data-tool="orb_yellow" style="color:#FFEB3B; border-color:#FFEB3B;">Orb Y</button>
-            <button class="tool-btn" data-tool="pad_yellow" style="background:#FFEB3B; color:black;">Pad Y</button>
-            <button class="tool-btn" data-tool="orb_pink" style="color:#FF66FF; border-color:#FF66FF;">Orb P</button>
-            <button class="tool-btn" data-tool="pad_pink" style="background:#FF66FF; color:white;">Pad P</button>
+        <div class="ed-top">
+            <button class="gb dim" id="edUndo" title="Undo"></button>
+            <button class="gb dim" id="edRedo" title="Redo"></button>
+            <button class="gb dim" id="edTrash" title="Delete selected"></button>
+            <button class="gb" id="edEye" title="Hide / show editor UI"></button>
+            <input type="range" id="edScrub" min="0" max="4000" step="1" value="0">
+            <button class="gb sm on" id="edGrid" title="Grid">GRID</button>
+            <button class="gb" id="edHelp" title="Help"></button>
+            <button class="gb lg" id="edGear" title="Level settings"></button>
+            <button class="gb lg" id="edPause" title="Pause"></button>
         </div>
-
-        <div class="tool-category">
-            <button class="tool-btn" data-tool="portal_cube" style="background:#00FF00; color:black;">Cube</button>
-            <button class="tool-btn" data-tool="portal_ship" style="background:#FF00FF; color:black;">Ship</button>
-            <button class="tool-btn" data-tool="portal_ufo" style="background:#FF8800; color:black;">UFO</button>
-            <button class="tool-btn" data-tool="portal_ball" style="background:#FFA500; color:black;">Ball</button>
-            <button class="tool-btn" data-tool="portal_wave" style="background:#00FFFF; color:black;">Wave</button>
+        <div class="ed-left"><button class="gb lg" id="edPlay" title="Playtest"></button></div>
+        <div class="ed-right" id="edRight"></div>
+        <div class="ed-bottom">
+            <div class="ed-tabs">
+                <button class="tab on" data-mode="build">Build</button><button class="tab" data-mode="edit">Edit</button>
+                <button class="tab" data-mode="delete">Delete</button><button class="tab" data-mode="view">View</button>
+            </div>
+            <div class="ed-panel" id="pBuild">
+                <div class="bcol"><div class="cat-row" id="catRow"></div><div class="ob-grid" id="obGrid"></div></div>
+                <div id="trigSet" class="hidden">
+                    <label>Color <input type="color" id="trigColor" value="#ff3b3b"></label>
+                    <label>Time <input type="number" id="trigDur" value="1" min="0" max="20" step="0.25"></label>
+                    <label>Val <input type="number" id="trigVal" value="1.5" step="0.1" title="Used by Shake / Zoom / Alpha"></label>
+                </div>
+            </div>
+            <div class="ed-panel hidden" id="pEdit">
+                <div class="pad">
+                    <button class="kb arrow" data-mv="0,1" style="grid-column:2;grid-row:1"></button>
+                    <button class="kb arrow" data-mv="-1,0" style="grid-column:1;grid-row:2"></button>
+                    <span id="stepTxt" style="grid-column:2;grid-row:2" title="Move step">1</span>
+                    <button class="kb arrow" data-mv="1,0" style="grid-column:3;grid-row:2"></button>
+                    <button class="kb arrow" data-mv="0,-1" style="grid-column:2;grid-row:3"></button>
+                </div>
+                <div class="kbg"><button class="kb" id="edRotL" title="Rotate left">&#8634;</button><button class="kb" id="edRotR" title="Rotate right">&#8635;</button><button class="kb" id="edFlip" title="Flip upside down">Flip</button></div>
+                <div id="selInfo">Selected: 0</div>
+            </div>
+            <div class="ed-panel hidden" id="pDelete">
+                <button class="kb gray" id="dlSel" title="Delete selected"></button>
+                <button class="kb gray" id="dlTrig" title="Delete all triggers">Triggers</button>
+                <button class="kb gray" id="dlAll" title="Delete everything">All</button>
+                <div class="hint">Click an object to delete it</div>
+            </div>
+            <div class="ed-panel hidden" id="pView">
+                <button class="kb on" id="vwGrid">Grid</button>
+                <button class="kb" id="vwTrig">Hide Triggers</button>
+            </div>
+            <div class="ed-big">
+                <button class="kb" id="toolRotate">Rotate: 0°</button>
+                <button class="kb" id="edSwipe" title="Drag to place / delete / select">Swipe</button>
+                <button class="kb stub" title="Coming soon">Free Move</button>
+                <button class="kb stub" title="Coming soon">Snap</button>
+            </div>
         </div>
-
-        <div class="tool-category">
-            <button class="tool-btn" data-tool="portal_grav_up" style="background:#FFEB3B; color:black;">Grav Up</button>
-            <button class="tool-btn" data-tool="portal_grav_down" style="background:#0088FF; color:white;">Grav Down</button>
-        </div>
-
-        <div class="tool-category">
-            <button class="tool-btn" data-tool="speed_normal" style="background:#4CAF50; color:white;">1x</button>
-            <button class="tool-btn" data-tool="speed_fast" style="background:#E91E63; color:white;">2x</button>
-        </div>
-
-        <div class="tool-category">
-            <button class="tool-btn" data-tool="eraser">Eraser</button>
-            <button class="tool-btn" id="toolSave" style="background:#2196F3; color:white;">Save Code</button>
-            <button class="tool-btn" id="toolLoad" style="background:#2196F3; color:white;">Load Code</button>
-            <button class="tool-btn" id="toolClear" style="background:#FF4444; color:white;">Clear</button>
-        </div>
-
-        <div class="tool-category">
-            <button class="tool-btn" style="background:#FFB800; color:black;" id="toolPlay">Play</button>
-            <button class="tool-btn" style="background:#FF4444; color:white;" id="toolQuit">Menu</button>
-        </div>
+        <div style="display:none"><button id="toolSave"></button><button id="toolLoad"></button><button id="toolClear"></button><button id="toolPlay"></button><button id="toolQuit"></button></div>
     </div>
-    <div id="editorControlsText" class="hidden">L/R Arrows (Hold Shift for fast pan) to scroll. W/Space/Up to Jump! Escape to Pause.</div>
+    <div id="editorControlsText" class="hidden">Arrow keys (Shift = fast) or the slider scroll. R rotates. Ctrl+Z undo, Ctrl+C / V / D copy, paste, duplicate. Esc = pause menu.</div>
 
     <div id="mainMenu" class="ui-screen">
-        <h1>CUBE EVADERS</h1>
-        <div class="menu-row" style="margin-top: 40px;">
-            <button class="btn btn-green" id="btnPlayMain">Play Campaign</button>
-            <button class="btn btn-blue" id="btnEditor">Level Editor</button>
-            <button class="btn" id="btnIconKit">Icon Kit</button>
+        <h1 id="gameTitle">CUBE EVADERS</h1>
+        <div class="menu-main">
+            <button class="plus sm" id="btnIconKit" title="Icon Kit"></button>
+            <button class="plus lg" id="btnPlayMain" title="Play"></button>
+            <button class="plus sm" id="btnEditor" title="Level Editor"></button>
+        </div>
+    </div>
+
+    <div id="levelSelect" class="ui-screen hidden">
+        <h1>SELECT LEVEL</h1>
+        <div class="menu-row">
+            <button class="btn lvl-btn" data-lvl="0">1. Cube Rush<br><small>Easy</small></button>
+            <button class="btn btn-blue lvl-btn" data-lvl="1">2. Gravity Rift<br><small>Normal</small></button>
+        </div>
+        <button class="btn btn-red" id="btnBackFromLevels" style="margin-top: 30px;">Back</button>
+    </div>
+
+    <div id="myLevels" class="ui-screen hidden">
+        <h1>MY LEVELS</h1>
+        <div class="lv-list" id="lvList"></div>
+        <div class="menu-row">
+            <button class="btn" id="lvNew">New Level</button>
+            <button class="btn btn-red" id="lvBack">Back</button>
         </div>
     </div>
 
     <div id="iconKitScreen" class="ui-screen hidden">
         <h1>ICON KIT</h1>
         <div class="menu-row">
-            <div class="color-picker"><h2>Primary</h2><input type="color" id="color1" value="#FF00FF"></div>
-            <div class="color-picker"><h2>Secondary</h2><input type="color" id="color2" value="#00FFFF"></div>
+            <div class="color-picker"><h2>Primary</h2><input type="color" id="color1" value="#FFFFFF"></div>
+            <div class="color-picker"><h2>Secondary</h2><input type="color" id="color2" value="#5E5E5E"></div>
         </div>
         <button class="btn" id="btnBackFromIcons" style="margin-top: 40px;">Back to Menu</button>
     </div>
@@ -185,7 +444,9 @@
             iconKit: document.getElementById('iconKitScreen'), 
             game: document.getElementById('gameUI'), 
             editor: document.getElementById('editorUI'),
-            pause: document.getElementById('pauseUI')
+            pause: document.getElementById('pauseUI'),
+            levelSelect: document.getElementById('levelSelect'),
+            myLevels: document.getElementById('myLevels')
         };
         const editorText = document.getElementById('editorControlsText');
         const progressFill = document.getElementById('progressBarFill');
@@ -202,7 +463,7 @@
         const btnCopyCode = document.getElementById('btnCopyCode');
 
         const SIZE = 50; 
-        const FLOOR_HEIGHT = 120;
+        let FLOOR_HEIGHT = 120; let lastGy = null;
         let GAME_SPEED = 11; 
         const LEVEL_PIXEL_LENGTH = 45000;
 
@@ -214,14 +475,17 @@
         let editorCameraX = 0; let currentTool = 'block'; let currentRotation = 0;
         let customLevelData = []; let playingCustom = false; let activeObstacles = []; 
         let isHolding = false; let keys = {}; let jumpBufferFrames = 0;
-        let coinsCollected = 0;
+        let coinsCollected = 0; let deathAt = 0, deathSeq = 0; let AC, mStep = 0, mOn = false; let fx; let currentLevel = 0, levelEnd = 1;
 
         let hacks = { noclip: false, slowmo: false };
 
-        let player = { x: 250, y: 0, w: SIZE, h: SIZE, dy: 0, rotation: 0, isGrounded: true, mode: 'cube', gravityDir: 1, color1: '#FF00FF', color2: '#00FFFF' };
+        let player = { x: 250, y: 0, w: SIZE, h: SIZE, dy: 0, rotation: 0, isGrounded: true, mode: 'cube', gravityDir: 1, color1: '#FFFFFF', color2: '#5E5E5E' };
 
         function resize() {
             canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+            FLOOR_HEIGHT = Math.max(120, Math.min(canvas.height * 0.28, canvas.height - 620));
+            document.documentElement.style.setProperty('--k', FLOOR_HEIGHT / 100 + 'px');
+            const gyNew = canvas.height - FLOOR_HEIGHT; if (lastGy !== null && gyNew !== lastGy) { const d = gyNew - lastGy; activeObstacles.forEach(o => { o.y += d; }); player.y += d; } lastGy = gyNew;
             if(gameState === 'menu' || gameState === 'iconKit') drawMenuBackground();
             if(gameState === 'editor') drawEditor();
             if(gameState === 'paused') draw();
@@ -232,12 +496,13 @@
             Object.values(screens).forEach(s => s.classList.add('hidden'));
             editorText.classList.add('hidden');
             if (screens[screenName]) screens[screenName].classList.remove('hidden');
-            if (screenName === 'editor') editorText.classList.remove('hidden');
             if (screenName === 'game' || screenName === 'pause') screens.game.classList.remove('hidden');
         }
 
-        document.getElementById('btnPlayMain').addEventListener('click', () => { playingCustom = false; startGame(true); });
-        document.getElementById('btnEditor').addEventListener('click', () => { gameState = 'editor'; switchScreen('editor'); drawEditor(); });
+        document.getElementById('btnPlayMain').addEventListener('click', () => { gameState = 'levelSelect'; switchScreen('levelSelect'); });
+        document.querySelectorAll('.lvl-btn').forEach(b => b.addEventListener('click', () => { currentLevel = +b.dataset.lvl; playingCustom = false; startGame(true); }));
+        document.getElementById('btnBackFromLevels').addEventListener('click', () => { gameState = 'menu'; switchScreen('menu'); });
+        document.getElementById('btnEditor').addEventListener('click', () => showLevels());
         document.getElementById('btnIconKit').addEventListener('click', () => { gameState = 'iconKit'; switchScreen('iconKit'); });
         document.getElementById('btnBackFromIcons').addEventListener('click', () => { player.color1 = document.getElementById('color1').value; player.color2 = document.getElementById('color2').value; gameState = 'menu'; switchScreen('menu'); });
         document.getElementById('toolQuit').addEventListener('click', () => { gameState = 'menu'; switchScreen('menu'); });
@@ -276,17 +541,14 @@
 
         btnConfirmLoad.addEventListener('click', () => {
             try {
-                let decodedData = JSON.parse(atob(levelCodeInput.value.trim()));
-                if(Array.isArray(decodedData)) {
-                    customLevelData = decodedData;
-                    levelCodeUI.classList.add('hidden');
-                    alert("Level Loaded successfully!");
-                } else {
-                    alert("Invalid level data format!");
-                }
-            } catch (e) {
-                alert("Invalid or broken level code!");
-            }
+                const d = JSON.parse(atob(levelCodeInput.value.trim()));
+                if (!Array.isArray(d)) throw 0;
+                const known = t => t === 'block' || t === 'spike' || t === 'coin' || /^(orb|pad|portal|speed|trig)_/.test(t);
+                const ok = d.filter(o => o && typeof o.type === 'string' && known(o.type) && Number.isFinite(+o.x) && Number.isFinite(+o.gridY)).map(o => ({ ...o, x: +o.x, gridY: Math.max(1, Math.round(+o.gridY)) }));
+                customLevelData = ok; sel = new Set(); commit();
+                levelCodeUI.classList.add('hidden');
+                toast('Level loaded (' + ok.length + ' objects)');
+            } catch (e) { toast('Invalid or broken level code!'); }
         });
 
         document.getElementById('toolClear').addEventListener('click', () => {
@@ -299,7 +561,7 @@
             gameState = 'playing'; switchScreen('game'); gameLoop(); 
         });
         document.getElementById('btnQuitFromPause').addEventListener('click', () => { 
-            gameState = 'menu'; switchScreen('menu'); cancelAnimationFrame(animationId); 
+            cancelAnimationFrame(animationId); if (playingCustom) backFromPlay(); else { gameState = 'levelSelect'; switchScreen('levelSelect'); } 
         });
 
         const btnNoclip = document.getElementById('btnHackNoclip');
@@ -336,7 +598,7 @@
 
             if (gameState !== 'playing') return;
             if (gameOver || levelComplete) {
-                if (levelComplete) { gameState = 'menu'; switchScreen('menu'); } 
+                if (levelComplete) { if (playingCustom) backFromPlay(); else { gameState = 'levelSelect'; switchScreen('levelSelect'); } } 
                 else { attempts++; startGame(false); }
                 return;
             }
@@ -384,37 +646,80 @@
         window.addEventListener('mousedown', (e) => {
             if (levelCodeUI.classList.contains('hidden') === false) return;
             if (gameState === 'playing') handleInputStart();
-            if (gameState === 'editor' && e.clientY > 160) handleEditorClick(e);
+            if (gameState === 'editor' && e.target === canvas) { dragging = true; lastCell = cellAt(e).join(','); handleEditorClick(e); }
         });
         window.addEventListener('mouseup', handleInputEnd);
         window.addEventListener('touchstart', (e) => { if(gameState === 'playing' && levelCodeUI.classList.contains('hidden')) handleInputStart(); });
         window.addEventListener('touchend', handleInputEnd);
 
-        function generateCampaignLevel() {
-            let ops = []; let currentX = 1000; const baseY = canvas.height - FLOOR_HEIGHT;
-            const chunkTypes = [
-                [{t: 'block', dx: 0, dy: 1}, {t: 'spike', dx: 1, dy: 1}, {t: 'block', dx: 2, dy: 1}],
-                [{t: 'block', dx: 0, dy: 1}, {t: 'spike', dx: 1, dy: 1}, {t: 'spike', dx: 2, dy: 1}, {t: 'block', dx: 3, dy: 1}],
-                [{t: 'pad_pink', dx: 0, dy: 1}, {t: 'block', dx: 3, dy: 3}, {t: 'spike', dx: 3, dy: 4}, {t: 'orb_pink', dx: 6, dy: 5}, {t: 'block', dx: 9, dy: 4}, {t: 'coin', dx: 6, dy: 6.5}],
-                [{t: 'block', dx: 0, dy: 1}, {t: 'block', dx: 0, dy: 6}, {t: 'portal_ship', dx: 1, dy: 2}, {t: 'block', dx: 1, dy: 1}, {t: 'block', dx: 1, dy: 6}, {t: 'block', dx: 7, dy: 2}, {t: 'spike', dx: 7, dy: 3}, {t: 'block', dx: 7, dy: 6}, {t: 'block', dx: 12, dy: 3}, {t: 'block', dx: 12, dy: 5}, {t: 'portal_cube', dx: 17, dy: 2}, {t: 'block', dx: 17, dy: 1}, {t: 'block', dx: 17, dy: 6}],
-                [{t: 'block', dx: 0, dy: 1}, {t: 'block', dx: 0, dy: 6}, {t: 'portal_ufo', dx: 1, dy: 2}, {t: 'block', dx: 1, dy: 1}, {t: 'block', dx: 1, dy: 6}, {t: 'spike', dx: 6, dy: 1}, {t: 'spike', dx: 6, dy: 5, rot: 180}, {t: 'coin', dx: 6, dy: 3}, {t: 'block', dx: 11, dy: 3}, {t: 'portal_cube', dx: 16, dy: 2}, {t: 'block', dx: 16, dy: 1}, {t: 'block', dx: 16, dy: 6}],
-                [{t: 'block', dx: 0, dy: 1}, {t: 'block', dx: 0, dy: 7}, {t: 'portal_wave', dx: 1, dy: 3}, {t: 'block', dx: 1, dy: 1}, {t: 'block', dx: 1, dy: 7}, {t: 'block', dx: 6, dy: 2}, {t: 'block', dx: 6, dy: 6}, {t: 'block', dx: 11, dy: 4}, {t: 'portal_cube', dx: 17, dy: 2}, {t: 'block', dx: 17, dy: 1}, {t: 'block', dx: 17, dy: 7}],
-                [{t: 'speed_fast', dx: 0, dy: 2}, {t: 'block', dx: 4, dy: 1}, {t: 'spike', dx: 5, dy: 1}, {t: 'spike', dx: 6, dy: 1}, {t: 'block', dx: 7, dy: 1}, {t: 'speed_normal', dx: 14, dy: 2}],
-                [{t: 'portal_grav_up', dx: 0, dy: 2}, {t: 'spike', dx: 5, dy: 10, rot: 180}, {t: 'block', dx: 5, dy: 11}, {t: 'spike', dx: 6, dy: 10, rot: 180}, {t: 'block', dx: 6, dy: 11}, {t: 'portal_grav_down', dx: 10, dy: 8}]
-            ];
+        // --- Campaign levels (same data format as the editor's level codes) ---
+        function mkLevel(fn) {
+            const o = [], add = (type, c, r, rot) => o.push({ type, x: 1000 + c * SIZE, gridY: r, rotation: rot || 0 });
+            const L = {
+                sp: (c, n = 1, r = 1, rot = 0) => { for (let i = 0; i < n; i++) add('spike', c + i, r, rot); },
+                bl: (c, r, w = 1) => { for (let i = 0; i < w; i++) add('block', c + i, r); },
+                tw: (c, h, w = 1) => { for (let r = 1; r <= h; r++) L.bl(c, r, w); },
+                hang: (c, n, w = 1) => { for (let r = 11; r > 11 - n; r--) L.bl(c, r, w); },
+                pad: (c, r, k = 'yellow') => add('pad_' + k, c, r),
+                orb: (c, r, k = 'yellow') => add('orb_' + k, c, r),
+                coin: (c, r) => add('coin', c, r),
+                gate: (c, r, t) => add(t, c, r),
+                trig: (c, type, p) => o.push({ type: 'trig_' + type, x: 1000 + c * SIZE, gridY: 1, rotation: 0, ...p })
+            };
+            fn(L); return o;
+        }
 
-            while (currentX < LEVEL_PIXEL_LENGTH) {
-                let chunk = chunkTypes[Math.floor(Math.random() * chunkTypes.length)];
-                chunk.forEach(item => {
-                    let w = (item.t.startsWith('portal') || item.t.startsWith('speed')) ? 40 : item.t.startsWith('orb_') || item.t === 'coin' ? 40 : SIZE;
-                    let h = (item.t.startsWith('portal') || item.t.startsWith('speed')) ? 150 : item.t.startsWith('orb_') || item.t === 'coin' ? 40 : item.t.startsWith('pad_') ? 12 : SIZE;
-                    ops.push({ type: item.t, x: currentX + (item.dx * SIZE), y: baseY - (item.dy * SIZE), w: w, h: h, rotation: item.rot || 0, collected: false });
-                });
-                let maxDx = Math.max(...chunk.map(i => i.dx));
-                currentX += (maxDx * SIZE) + 600 + (Math.random() * 400); 
-            }
-            ops.push({ type: 'finish', x: LEVEL_PIXEL_LENGTH, y: baseY - SIZE*11, w: SIZE*2, h: SIZE*11, rotation: 0 });
-            return ops;
+        const LEVELS = [
+            { name: 'Cube Rush', data: () => mkLevel(L => {
+                L.sp(12); L.sp(24, 2); L.tw(36, 1); L.sp(40); L.sp(52, 3);
+                L.tw(66, 1); L.tw(69, 2); L.tw(72, 1); L.coin(70, 4); L.sp(77, 2);
+                L.pad(92, 1); L.sp(93, 4); L.sp(108); L.sp(114, 2);
+                L.orb(128, 3); L.tw(130, 3); L.sp(146, 2);
+                L.tw(160, 2, 3); L.sp(165, 2); L.sp(176, 3); L.coin(177, 3);
+                L.pad(190, 1, 'pink'); L.sp(191, 3); L.sp(205);
+                L.orb(218, 3); L.tw(220, 3, 2); L.sp(236, 2);
+                L.tw(248, 2, 2); L.sp(251, 2); L.tw(255, 2, 2); L.sp(270, 3);
+                L.trig(50, 'bg', { color: '#8a2be2', dur: 4 }); L.trig(50, 'ground', { color: '#4b1a8c', dur: 4 });
+                L.trig(126, 'pulse', { color: '#ffffff', dur: 0.6 });
+                L.trig(150, 'bg', { color: '#ff7a00', dur: 5 }); L.trig(150, 'ground', { color: '#8c3d00', dur: 5 });
+                L.trig(214, 'zoom', { val: 1.2, dur: 1.5 }); L.trig(240, 'zoom', { val: 1, dur: 1.5 });
+                L.trig(244, 'bg', { color: '#00c853', dur: 4 }); L.trig(244, 'ground', { color: '#006b2c', dur: 4 });
+            }) },
+            { name: 'Gravity Rift', data: () => mkLevel(L => {
+                L.sp(12, 2); L.tw(24, 1); L.sp(25); L.tw(26, 1); L.sp(40, 3);
+                L.tw(54, 1, 2); L.sp(57, 3); L.tw(60, 1, 2); L.coin(58, 4);
+                L.pad(76, 1); L.sp(77, 4);
+                L.gate(92, 1, 'speed_fast');
+                L.sp(108); L.sp(124, 2); L.tw(140, 1); L.sp(148); L.sp(162, 3);
+                L.gate(176, 1, 'speed_normal');
+                L.gate(190, 1, 'portal_ship');
+                L.tw(206, 3); L.hang(220, 5); L.tw(234, 5); L.hang(248, 6);
+                L.tw(262, 3); L.hang(262, 4); L.tw(278, 5); L.hang(278, 3); L.tw(294, 2); L.hang(294, 6);
+                [1, 4, 7, 10].forEach(r => L.gate(304, r, 'portal_cube'));
+                L.gate(330, 1, 'portal_grav_up');
+                L.sp(350, 1, 11, 180); L.sp(364, 2, 11, 180); L.sp(380, 3, 11, 180);
+                L.gate(396, 9, 'portal_grav_down');
+                L.sp(412, 2); L.orb(426, 3); L.tw(428, 3); L.sp(446, 3); L.coin(447, 3);
+                L.trig(20, 'bg', { color: '#e91e63', dur: 3 });
+                L.trig(91, 'shake', { val: 5, dur: 1.5 });
+                L.trig(186, 'bg', { color: '#3a0ca3', dur: 3 }); L.trig(186, 'ground', { color: '#240046', dur: 3 });
+                L.trig(303, 'pulse', { color: '#ffffff', dur: 0.8 });
+                L.trig(328, 'bg', { color: '#00b4d8', dur: 2 }); L.trig(328, 'ground', { color: '#023e8a', dur: 2 });
+                L.trig(400, 'bg', { color: '#ff6d00', dur: 3 }); L.trig(440, 'zoom', { val: 1.15, dur: 2 });
+            }) }
+        ];
+
+        function buildFrom(data) {
+            const gy = canvas.height - FLOOR_HEIGHT;
+            const obs = data.map(o => {
+                const t = o.type, big = t.startsWith('portal') || t.startsWith('speed'), small = t.startsWith('orb_') || t === 'coin';
+                const w = big || small ? 40 : SIZE, h = big ? 150 : small ? 40 : t.startsWith('pad_') ? 12 : SIZE;
+                const yOff = t.startsWith('pad_') ? SIZE - 12 : small ? SIZE / 2 - 20 : 0;
+                return { ...o, w, h, y: gy - SIZE * o.gridY - Math.max(0, h - SIZE) + yOff, collected: false };
+            });
+            const lastX = obs.length ? Math.max(1000, ...obs.map(o => o.x)) + 500 : 1000;
+            obs.push({ type: 'finish', x: lastX, y: gy - SIZE * 11, w: SIZE * 2, h: SIZE * 11, rotation: 0 });
+            return obs;
         }
 
         function startGame(fullReset = false) {
@@ -425,23 +730,14 @@
             player.dy = 0; player.rotation = 0; player.isGrounded = true; 
             player.mode = 'cube'; player.gravityDir = 1;
             GAME_SPEED = 11; distance = 0; gameOver = false; levelComplete = false; 
-            bgOffset = 0; screenShake = 0; particles = []; trailParticles = [];
+            bgOffset = 0; screenShake = 0; particles = []; trailParticles = []; resetFx();
+            if (playingCustom && myLevels[curLvl]) { const st = myLevels[curLvl].settings || {}; if (st.bg) fx.bg = hexRGB(st.bg); if (st.gr) fx.gr = hexRGB(st.gr); player.mode = st.mode || 'cube'; GAME_SPEED = st.speed ? 17 : 11; }
             attemptDisplay.innerText = `Attempt ${attempts}`;
+            startMusic();
             coinDisplay.innerText = `Coins: ${coinsCollected}`;
 
-            if (playingCustom) {
-                activeObstacles = customLevelData.map(obs => {
-                    let w = (obs.type.startsWith('portal') || obs.type.startsWith('speed')) ? 40 : obs.type.startsWith('orb_') || obs.type === 'coin' ? 40 : SIZE;
-                    let h = (obs.type.startsWith('portal') || obs.type.startsWith('speed')) ? 150 : obs.type.startsWith('orb_') || obs.type === 'coin' ? 40 : obs.type.startsWith('pad_') ? 12 : SIZE;
-                    let yOffset = obs.type.startsWith('pad_') ? (SIZE - 12) : obs.type.startsWith('orb_') || obs.type === 'coin' ? (SIZE/2 - 20) : 0;
-                    return { ...obs, w: w, h: h, y: (canvas.height - FLOOR_HEIGHT) - (SIZE * obs.gridY) - (h - SIZE) + yOffset, collected: false };
-                });
-                let lastX = Math.max(1000, ...customLevelData.map(o => o.x)) + 500;
-                if (activeObstacles.length === 0) lastX = 1000;
-                activeObstacles.push({ type: 'finish', x: lastX, y: canvas.height - FLOOR_HEIGHT - SIZE*11, w: SIZE*2, h: SIZE*11, rotation: 0 });
-            } else {
-                activeObstacles = generateCampaignLevel();
-            }
+            activeObstacles = buildFrom(playingCustom ? customLevelData : LEVELS[currentLevel].data());
+            levelEnd = activeObstacles[activeObstacles.length - 1].x - player.x;
 
             if (animationId) cancelAnimationFrame(animationId);
             gameLoop();
@@ -449,44 +745,32 @@
 
         function triggerDeath() {
             if (gameOver || hacks.noclip) return;
-            gameOver = true; screenShake = 25; 
-            for(let i=0; i<80; i++) {
+            gameOver = true; screenShake = 6; deathAt = performance.now(); boom();
+            for (let i = 0; i < 40; i++) {
                 particles.push({
                     x: player.x + player.w/2, y: player.y + player.h/2,
-                    dx: (Math.random() - 0.5) * 45, dy: (Math.random() - 0.5) * 45,
-                    size: Math.random() * 12 + 4, color: Math.random() > 0.5 ? player.color1 : player.color2, life: 1.0
+                    dx: (Math.random() - 0.5) * 36, dy: (Math.random() - 0.5) * 36 - 4,
+                    size: Math.random() * 10 + 5, color: Math.random() > 0.5 ? player.color1 : player.color2, life: 1.0
                 });
             }
-        }
-
-        function handleEditorClick(e) {
-            let worldX = e.clientX + editorCameraX; let gridX = Math.floor(worldX / SIZE) * SIZE;
-            let groundY = canvas.height - FLOOR_HEIGHT; let distFromGround = groundY - e.clientY;
-            let gridY = Math.ceil(distFromGround / SIZE);
-
-            if (gridY < 1) return;
-            customLevelData = customLevelData.filter(obs => !(obs.x === gridX && obs.gridY === gridY));
-
-            if (currentTool !== 'eraser') customLevelData.push({ type: currentTool, x: gridX, gridY: gridY, rotation: currentRotation });
-            drawEditor();
+            const id = ++deathSeq;
+            setTimeout(() => { if (id === deathSeq && gameOver && gameState === 'playing') { attempts++; startGame(false); } }, 1000);
         }
 
         function drawEditor() {
-            if (gameState !== 'editor') return;
+            cancelAnimationFrame(edRaf); if (gameState !== 'editor') return;
 
             let panSpeed = (keys['ShiftLeft'] || keys['ShiftRight']) ? 75 : 25;
             if (keys['ArrowRight'] && levelCodeUI.classList.contains('hidden')) editorCameraX += panSpeed;
             if (keys['ArrowLeft'] && levelCodeUI.classList.contains('hidden')) editorCameraX = Math.max(0, editorCameraX - panSpeed);
 
-            ctx.fillStyle = '#1a2a6c'; ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = '#112953'; ctx.fillRect(0, canvas.height - FLOOR_HEIGHT, canvas.width, FLOOR_HEIGHT);
-            ctx.fillStyle = '#ffffff'; ctx.fillRect(0, canvas.height - FLOOR_HEIGHT, canvas.width, 3);
+            resetFx(); const _st = myLevels[curLvl] && myLevels[curLvl].settings; if (_st) { fx.bg = hexRGB(_st.bg); fx.gr = hexRGB(_st.gr); } drawBackdrop(editorCameraX * 0.3, editorCameraX, false);
             
             let ceilingY = canvas.height - FLOOR_HEIGHT - (SIZE * 11);
             ctx.fillStyle = 'rgba(255,0,0,0.2)'; ctx.fillRect(0, ceilingY, canvas.width, 3);
 
             ctx.save(); ctx.translate(-editorCameraX, 0);
-            ctx.strokeStyle = 'rgba(255,255,255,0.1)'; ctx.lineWidth = 1;
+            ctx.strokeStyle = showGrid ? 'rgba(0,0,60,0.35)' : 'rgba(0,0,0,0)'; ctx.lineWidth = 1;
             let startCol = Math.floor(editorCameraX / SIZE);
             let endCol = startCol + Math.ceil(canvas.width / SIZE) + 1;
             
@@ -500,6 +784,8 @@
 
             let groundY = canvas.height - FLOOR_HEIGHT;
             customLevelData.forEach(obs => {
+                if (hideTrig && obs.type.startsWith('trig_')) return;
+                if (obs.x + 220 < editorCameraX || obs.x > editorCameraX + canvas.width) return;
                 let drawY = groundY - (SIZE * obs.gridY);
                 let w = (obs.type.startsWith('portal') || obs.type.startsWith('speed')) ? 40 : obs.type.startsWith('orb_') || obs.type === 'coin' ? 40 : SIZE;
                 let h = (obs.type.startsWith('portal') || obs.type.startsWith('speed')) ? 150 : obs.type.startsWith('orb_') || obs.type === 'coin' ? 40 : obs.type.startsWith('pad_') ? 12 : SIZE;
@@ -510,10 +796,8 @@
 
                 ctx.save(); ctx.translate(obs.x + w/2, drawY + h/2); ctx.rotate((obs.rotation || 0) * Math.PI / 180);
 
-                if (obs.type === 'spike') {
-                    ctx.fillStyle = '#111'; ctx.beginPath();
-                    ctx.moveTo(0, -h/2); ctx.lineTo(w/2, h/2); ctx.lineTo(-w/2, h/2);
-                    ctx.fill(); ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.5; ctx.closePath(); ctx.stroke();
+                if (obs.type.startsWith('trig_')) { drawTrig(obs, w, h);
+                } else if (obs.type === 'spike') { gdSpike(w, h);
                 } else if (obs.type.startsWith('portal')) {
                     let color = obs.type === 'portal_cube' ? '#00FF00' : obs.type === 'portal_ship' ? '#FF00FF' : obs.type === 'portal_ball' ? '#FFA500' : obs.type === 'portal_ufo' ? '#FF8800' : obs.type === 'portal_grav_up' ? '#FFEB3B' : obs.type === 'portal_grav_down' ? '#0088FF' : '#00FFFF';
                     ctx.strokeStyle = color; ctx.lineWidth = 4;
@@ -534,14 +818,17 @@
                 } else if (obs.type === 'coin') {
                     ctx.beginPath(); ctx.arc(0, 0, w/2.5, 0, Math.PI*2); ctx.fillStyle = '#FFD700'; ctx.fill();
                     ctx.lineWidth=2; ctx.strokeStyle='#FFF'; ctx.stroke();
-                } else {
-                    ctx.fillStyle = '#111'; ctx.fillRect(-w/2, -h/2, w, h);
-                    ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.strokeRect(-w/2, -h/2, w, h);
-                }
+                } else { gdBlock(w, h); }
                 ctx.restore();
             });
+            const gyr = canvas.height - FLOOR_HEIGHT;
+            ctx.save(); ctx.globalAlpha = 0.55; ctx.translate(player.x + SIZE / 2, gyr - SIZE / 2); cubeIcon(SIZE, player.color1, player.color2); ctx.restore();
+            ctx.fillStyle = 'rgba(255,255,255,.7)'; ctx.font = '14px ' + FONT; ctx.textAlign = 'center'; ctx.fillText('START', player.x + SIZE / 2, gyr - SIZE - 8);
+            sel.forEach(o => { const r = edRect(o, gyr); ctx.fillStyle = 'rgba(40,255,255,.2)'; ctx.fillRect(r[0], r[1], r[2], r[3]); ctx.strokeStyle = '#2ff'; ctx.lineWidth = 3; ctx.strokeRect(r[0] - 2, r[1] - 2, r[2] + 4, r[3] + 4); });
             ctx.restore();
-            requestAnimationFrame(drawEditor);
+            edScrub.max = Math.max(2000, maxX() + 1500); if (!scrubbing) edScrub.value = editorCameraX;
+            $e('edUndo').style.opacity = histI > 0 ? 1 : 0.5; $e('edRedo').style.opacity = histI < hist.length - 1 ? 1 : 0.5; $e('selInfo').textContent = 'Selected: ' + sel.size;
+            edRaf = requestAnimationFrame(drawEditor);
         }
 
         function checkCollision(r1, r2) {
@@ -571,9 +858,9 @@
             }
 
             distance += actualSpeed; bgOffset += actualSpeed * 0.3; 
-            let targetDist = playingCustom && activeObstacles.length > 0 ? activeObstacles[activeObstacles.length-1].x : LEVEL_PIXEL_LENGTH;
+            stepFx(); let targetDist = levelEnd;
             let percent = Math.min(100, Math.max(0, Math.floor((distance / targetDist) * 100)));
-            progressFill.style.width = `${percent}%`; progressText.innerText = `${percent}%`;
+            { const pr = Math.min(100, Math.max(0, distance / targetDist * 100)); progressFill.style.width = `${pr}%`; progressText.innerText = `${pr.toFixed(2)}%`; }
 
             if (player.isGrounded && (player.mode === 'cube' || player.mode === 'ball')) {
                 if (Math.random() > 0.4) {
@@ -659,6 +946,7 @@
             for (let i = 0; i < activeObstacles.length; i++) {
                 let obs = activeObstacles[i];
                 obs.x -= actualSpeed;
+                if (obs.type.startsWith('trig_') && !obs.fired && obs.x <= player.x + player.w / 2) fireTrig(obs);
 
                 if (checkCollision(player, obs)) {
                     if (obs.type === 'finish') levelComplete = true;
@@ -699,22 +987,89 @@
             if (activeObstacles.length > 0 && activeObstacles[0].x < -200) activeObstacles.shift();
         }
 
+        const FONT = "'Lilita One','Righteous',cursive";
+        const PCOL = { portal_cube: '#00FF00', portal_ship: '#FF00FF', portal_ball: '#FFA500', portal_ufo: '#FF8800', portal_grav_up: '#FFEB3B', portal_grav_down: '#0088FF', portal_wave: '#00FFFF', speed_fast: '#E91E63', speed_normal: '#4CAF50' };
+
+        function gdText(t, x, y, size, fill) {
+            ctx.font = size + 'px ' + FONT; ctx.textAlign = 'center'; ctx.lineJoin = 'round';
+            ctx.lineWidth = size / 5; ctx.strokeStyle = '#000'; ctx.strokeText(t, x, y);
+            ctx.fillStyle = fill || '#fff'; ctx.fillText(t, x, y);
+        }
+        function gdBlock(w, h) {
+            ctx.fillStyle = '#000'; ctx.fillRect(-w/2, -h/2, w, h);
+                        ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.strokeRect(-w/2 + 1, -h/2 + 1, w - 2, h - 2);
+            
+        }
+        const PANELS = [[0,0,163,190],[187,0,261,190],[472,0,341,58],[833,0,232,228],[0,208,89,111],[121,208,111,111],[259,207,189,189],[471,75,252,253],[743,77,70,71],[743,161,70,71],[0,337,239,94],[471,344,252,86],[746,246,319,184]];
+
+        function gdSpike(w, h) {
+            ctx.save(); ctx.lineJoin = 'round';
+            ctx.beginPath(); ctx.moveTo(0, -h/2); ctx.lineTo(w/2, h/2); ctx.lineTo(-w/2, h/2); ctx.closePath();
+            const g = ctx.createLinearGradient(0, h/2, 0, -h/2); g.addColorStop(0, '#000'); g.addColorStop(1, 'rgba(0,0,0,.35)');
+            ctx.fillStyle = g; ctx.fill();
+            ctx.shadowColor = '#fff'; ctx.shadowBlur = 8; ctx.strokeStyle = '#fff'; ctx.lineWidth = 3; ctx.stroke();
+            ctx.restore();
+        }
+        function drawBackdrop(bgx, gx, ceil) {
+            const W = canvas.width, H = canvas.height, gy = H - FLOOR_HEIGHT, P = 1064, PH = 430, TW = SIZE * 4.8;
+            const col = (c, m) => `rgb(${(c[0] * m[0]) | 0},${(c[1] * m[1]) | 0},${(c[2] * m[2]) | 0})`;
+            const base = col(fx.bg, [1, 1, 1]), pan = col(fx.bg, [.69, .67, .81]), shd = col(fx.bg, [.47, .47, .635]);
+            ctx.save();
+            ctx.fillStyle = base; ctx.fillRect(-W, -2 * H, 3 * W, 4 * H);
+            for (let x0 = -(bgx % P) - Math.ceil(W / P) * P; x0 < 2 * W; x0 += P) for (let k = 1; k <= 3; k++) {
+                const y0 = gy - PH * k;
+                for (const [x, y, w, h] of PANELS) {
+                    ctx.fillStyle = pan; ctx.fillRect(x0 + x, y0 + y, w, h);
+                    ctx.fillStyle = shd; ctx.fillRect(x0 + x, y0 + y + h - 6, w, 6); ctx.fillRect(x0 + x + w - 6, y0 + y, 6, h);
+                }
+            }
+            const band = (y, d) => {
+                const b = ctx.createLinearGradient(0, y, 0, y + d * 300); b.addColorStop(0, col(fx.gr, [1, 1, 1])); b.addColorStop(1, col(fx.gr, [.2, .08, .3]));
+                ctx.fillStyle = b; ctx.fillRect(-W, d > 0 ? y : y - H, 3 * W, H);
+                ctx.fillStyle = 'rgba(255,255,255,.14)'; ctx.fillRect(-W, d > 0 ? y : y - 18, 3 * W, 18);
+                ctx.fillStyle = 'rgba(255,255,255,.1)';
+                for (let x = -(gx % TW) - Math.ceil(W / TW) * TW; x < 2 * W; x += TW) ctx.fillRect(x, d > 0 ? y + 18 : y - H, 17, H - 18);
+                const lg = ctx.createLinearGradient(0, 0, W, 0); lg.addColorStop(0, 'rgba(255,255,255,.1)'); lg.addColorStop(0.3, '#fff'); lg.addColorStop(1, '#fff');
+                ctx.shadowColor = '#fff'; ctx.shadowBlur = 8; ctx.fillStyle = lg; ctx.fillRect(-W, d > 0 ? y - 3 : y, 3 * W, 3); ctx.shadowBlur = 0;
+            };
+            band(gy, 1); if (ceil) band(gy - SIZE * 11, -1);
+            if (fx.pulse > 0.01) { ctx.fillStyle = `rgba(${fx.pulseCol[0]},${fx.pulseCol[1]},${fx.pulseCol[2]},${fx.pulse * 0.5})`; ctx.fillRect(-W, -2 * H, 3 * W, 4 * H); }
+            ctx.restore();
+        }
+        function cubeIcon(s, c1, c2) {
+            const o = s / 2, k = s * 0.3;
+            ctx.fillStyle = '#000'; ctx.fillRect(-o, -o, s, s);
+            ctx.fillStyle = c1; ctx.fillRect(-o + 3, -o + 3, s - 6, s - 6);
+            for (const [sx, sy] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) {
+                const cx = sx * (o - 3 - k / 2), cy = sy * (o - 3 - k / 2);
+                ctx.fillStyle = '#000'; ctx.fillRect(cx - k / 2, cy - k / 2, k, k);
+                ctx.fillStyle = c2; ctx.fillRect(cx - k / 2 + 2.5, cy - k / 2 + 2.5, k - 5, k - 5);
+            }
+            ctx.save(); ctx.rotate(Math.PI / 4);
+            const d = s * 0.2; ctx.fillStyle = '#000'; ctx.fillRect(-d - 2.5, -d - 2.5, 2 * d + 5, 2 * d + 5);
+            ctx.fillStyle = c2; ctx.fillRect(-d, -d, 2 * d, 2 * d); ctx.restore();
+        }
+        function drawIcon(mode, s, c1, c2) {
+            const o = s / 2; ctx.lineJoin = 'round'; ctx.lineWidth = 3; ctx.strokeStyle = '#000';
+            const mini = (y, k) => { ctx.save(); ctx.translate(0, y); ctx.scale(k, k); cubeIcon(s, c1, c2); ctx.restore(); };
+            if (mode === 'cube') cubeIcon(s, c1, c2);
+            else if (mode === 'ship') { mini(-8, 0.62); ctx.fillStyle = c1; ctx.beginPath(); ctx.moveTo(-o - 6, 2); ctx.lineTo(-o + 4, 15); ctx.lineTo(o - 2, 15); ctx.lineTo(o + 12, 0); ctx.closePath(); ctx.fill(); ctx.stroke(); }
+            else if (mode === 'ufo') { mini(-9, 0.55); ctx.fillStyle = c1; ctx.beginPath(); ctx.ellipse(0, 10, o + 6, 11, 0, 0, 7); ctx.fill(); ctx.stroke(); }
+            else if (mode === 'ball') { ctx.fillStyle = c1; ctx.beginPath(); ctx.arc(0, 0, o, 0, 7); ctx.fill(); ctx.stroke(); ctx.fillStyle = c2; ctx.beginPath(); ctx.arc(0, 0, o * 0.5, 0, 7); ctx.fill(); ctx.stroke(); ctx.fillStyle = '#000'; ctx.fillRect(-1.5, -o, 3, s); }
+            else { ctx.fillStyle = c1; ctx.beginPath(); ctx.moveTo(26, 0); ctx.lineTo(-26, -20); ctx.lineTo(-12, 0); ctx.lineTo(-26, 20); ctx.closePath(); ctx.fill(); ctx.stroke(); ctx.fillStyle = c2; ctx.beginPath(); ctx.arc(-4, 0, 5, 0, 7); ctx.fill(); }
+        }
+
         function draw() {
+            const W = canvas.width, H = canvas.height, gy = H - FLOOR_HEIGHT, now = performance.now();
             ctx.save();
             if (screenShake > 0) ctx.translate((Math.random() - 0.5) * screenShake, (Math.random() - 0.5) * screenShake);
+            const z = Math.max(1, gy / (SIZE * 11 + 10)) * fx.zoom, cx = player.x + player.w / 2;
+            ctx.translate(W * 0.36 - cx, 0); ctx.translate(cx, gy); ctx.scale(z, z); ctx.translate(-cx, -gy);
+            drawBackdrop(bgOffset, distance, player.mode !== 'cube' || player.gravityDir === -1);
 
-            ctx.fillStyle = '#1a2a6c'; ctx.fillRect(-20, -20, canvas.width+40, canvas.height+40);
-            ctx.strokeStyle = 'rgba(255,255,255,0.04)'; ctx.lineWidth = 2;
-            for(let i = -50; i < canvas.width + 50; i += 120) { 
-                ctx.beginPath(); ctx.moveTo((i - bgOffset % 120), -50); ctx.lineTo((i - bgOffset % 120), canvas.height); ctx.stroke();
-            }
+            const ax = player.x - 100 - distance;
+            if (ax > -700) gdText('Attempt ' + attempts, ax, gy - SIZE * 6.6, 84, '#fff');
 
-            ctx.fillStyle = '#112953'; ctx.fillRect(-20, canvas.height - FLOOR_HEIGHT, canvas.width+40, FLOOR_HEIGHT+20);
-            ctx.fillStyle = '#ffffff'; ctx.fillRect(-20, canvas.height - FLOOR_HEIGHT, canvas.width+40, 4);
-
-            let ceilingY = canvas.height - FLOOR_HEIGHT - (SIZE * 11);
-            ctx.fillStyle = 'rgba(255,0,0,0.15)'; ctx.fillRect(-20, ceilingY, canvas.width+40, 4);
-            
             trailParticles.forEach(p => {
                 ctx.fillStyle = player.mode === 'wave' ? player.color2 : `rgba(255, 255, 255, ${p.life})`;
                 ctx.globalAlpha = p.life;
@@ -722,46 +1077,40 @@
             });
             ctx.globalAlpha = 1.0;
 
+            const pulse = 1 + Math.sin(now / 150) * 0.08;
             activeObstacles.forEach(obs => {
+                if (obs.x > W + 100 || obs.x < -300) return;
+                const w = obs.w, h = obs.h, t = obs.type;
                 ctx.save();
-                ctx.translate(obs.x + obs.w/2, obs.y + obs.h/2);
+                ctx.translate(obs.x + w/2, obs.y + h/2); ctx.globalAlpha = fx.alpha;
                 ctx.rotate((obs.rotation || 0) * Math.PI / 180);
-
-                if (obs.type === 'spike') {
-                    ctx.fillStyle = '#111'; ctx.beginPath();
-                    ctx.moveTo(0, -obs.h/2); ctx.lineTo(obs.w/2, obs.h/2); ctx.lineTo(-obs.w/2, obs.h/2);
-                    ctx.fill(); ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.5; ctx.closePath(); ctx.stroke();
-                } else if (obs.type === 'block') {
-                    ctx.fillStyle = '#111'; ctx.fillRect(-obs.w/2, -obs.h/2, obs.w, obs.h);
-                    ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.strokeRect(-obs.w/2, -obs.h/2, obs.w, obs.h);
-                } else if (obs.type === 'pad_yellow') {
-                    ctx.fillStyle = '#FFEB3B'; ctx.fillRect(-obs.w/2, -obs.h/2, obs.w, obs.h);
-                } else if (obs.type === 'pad_pink') {
-                    ctx.fillStyle = '#FF66FF'; ctx.fillRect(-obs.w/2, -obs.h/2, obs.w, obs.h);
-                } else if (obs.type === 'orb_yellow') {
-                    ctx.beginPath(); ctx.arc(0, 0, obs.w/2, 0, Math.PI*2); ctx.strokeStyle = '#FFEB3B'; ctx.lineWidth = 4; ctx.stroke();
-                    ctx.fillStyle = 'rgba(255, 235, 59, 0.4)'; ctx.fill();
-                    ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(0, 0, obs.w/6, 0, Math.PI*2); ctx.fill();
-                } else if (obs.type === 'orb_pink') {
-                    ctx.beginPath(); ctx.arc(0, 0, obs.w/2, 0, Math.PI*2); ctx.strokeStyle = '#FF66FF'; ctx.lineWidth = 4; ctx.stroke();
-                    ctx.fillStyle = 'rgba(255, 102, 255, 0.4)'; ctx.fill();
-                    ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(0, 0, obs.w/6, 0, Math.PI*2); ctx.fill();
-                } else if (obs.type === 'coin' && !obs.collected) {
-                    ctx.beginPath(); ctx.arc(0, 0, obs.w/2.5, 0, Math.PI*2); ctx.fillStyle = '#FFD700'; ctx.fill();
-                    ctx.lineWidth=2; ctx.strokeStyle='#FFF'; ctx.stroke();
-                    ctx.fillStyle = '#DAA520'; ctx.beginPath(); ctx.arc(0, 0, obs.w/4, 0, Math.PI*2); ctx.fill();
-                } else if (obs.type === 'finish') {
-                    ctx.fillStyle = 'rgba(0, 255, 0, 0.3)'; ctx.fillRect(-obs.w/2, -obs.h/2, obs.w, obs.h);
-                } else if (obs.type.startsWith('portal_')) {
-                    let color = obs.type === 'portal_cube' ? '#00FF00' : obs.type === 'portal_ship' ? '#FF00FF' : obs.type === 'portal_ball' ? '#FFA500' : obs.type === 'portal_ufo' ? '#FF8800' : obs.type === 'portal_grav_up' ? '#FFEB3B' : obs.type === 'portal_grav_down' ? '#0088FF' : '#00FFFF';
-                    ctx.strokeStyle = color; ctx.lineWidth = 6;
-                    ctx.beginPath(); ctx.ellipse(0, 0, obs.w/2, obs.h/2, 0, 0, Math.PI*2); ctx.stroke();
-                } else if (obs.type.startsWith('speed_')) {
-                    let color = obs.type === 'speed_fast' ? '#E91E63' : '#4CAF50';
-                    ctx.strokeStyle = color; ctx.lineWidth = 6;
-                    ctx.beginPath(); ctx.ellipse(0, 0, obs.w/2, obs.h/2, 0, 0, Math.PI*2); ctx.stroke();
-                    ctx.fillStyle = 'white'; ctx.font = '24px Righteous'; ctx.textAlign = 'center';
-                    ctx.fillText(obs.type === 'speed_fast' ? '>>' : '>', 0, 8);
+                if (t === 'spike') gdSpike(w, h);
+                else if (t === 'block') gdBlock(w, h);
+                else if (t.startsWith('pad_')) {
+                    const c = t === 'pad_yellow' ? '#ffe23a' : '#ff5bff';
+                    ctx.fillStyle = c;
+                    ctx.beginPath(); ctx.ellipse(0, h/2, w/2, h, 0, Math.PI, 0); ctx.fill();
+                } else if (t.startsWith('orb_')) {
+                    const c = t === 'orb_yellow' ? '#ffe23a' : '#ff5bff', r = w / 2 * pulse;
+                    
+                    ctx.fillStyle = c + '55'; ctx.beginPath(); ctx.arc(0, 0, r, 0, 7); ctx.fill();
+                    ctx.lineWidth = 4; ctx.strokeStyle = c; ctx.stroke();
+                    ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(0, 0, r * 0.4, 0, 7); ctx.fill();
+                } else if (t === 'coin') {
+                    if (!obs.collected) {
+                        
+                        ctx.beginPath(); ctx.arc(0, 0, w / 2.4, 0, 7); ctx.fillStyle = '#ffd33a'; ctx.fill();
+                        ctx.lineWidth = 3; ctx.strokeStyle = '#000'; ctx.stroke();
+                    }
+                } else if (t === 'finish') {
+                    ctx.fillStyle = 'rgba(255,255,255,.55)'; ctx.fillRect(-w/2, -h/2, w, h);
+                } else if (PCOL[t]) {
+                    const c = PCOL[t];
+                    
+                    ctx.fillStyle = c + '33'; ctx.beginPath(); ctx.ellipse(0, 0, w / 2, h / 2, 0, 0, 7); ctx.fill();
+                    ctx.lineWidth = 7; ctx.strokeStyle = c; ctx.stroke();
+                    
+                    if (t.startsWith('speed')) gdText(t === 'speed_fast' ? '>>' : '>', 0, 8, 24);
                 }
                 ctx.restore();
             });
@@ -771,52 +1120,29 @@
                 ctx.translate(player.x + player.w / 2, player.y + player.h / 2);
                 ctx.scale(1, player.gravityDir);
                 ctx.rotate(player.rotation);
-
                 if (hacks.noclip) ctx.globalAlpha = 0.5;
-
-                if (player.mode === 'cube') {
-                    ctx.fillStyle = player.color1; ctx.fillRect(-player.w/2, -player.h/2, player.w, player.h);
-                    ctx.fillStyle = player.color2; ctx.fillRect(-player.w/4, -player.h/4, player.w/2, player.h/2);
-                    ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.strokeRect(-player.w/2, -player.h/2, player.w, player.h);
-                } 
-                else if (player.mode === 'ship') {
-                    ctx.fillStyle = player.color1; ctx.beginPath(); ctx.moveTo(-25, -12); ctx.lineTo(25, 0); ctx.lineTo(-25, 12); ctx.closePath(); ctx.fill();
-                    ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke();
-                    ctx.fillStyle = player.color2; ctx.fillRect(-15, -6, 12, 12);
-                }
-                else if (player.mode === 'ufo') {
-                    ctx.fillStyle = player.color1; ctx.beginPath(); ctx.ellipse(0, 6, player.w/1.6, player.h/3, 0, 0, Math.PI*2); ctx.fill();
-                    ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke();
-                    ctx.fillStyle = player.color2; ctx.beginPath(); ctx.arc(0, 0, player.w/2.5, Math.PI, 0); ctx.fill(); ctx.stroke();
-                }
-                else if (player.mode === 'ball') {
-                    ctx.fillStyle = player.color1; ctx.beginPath(); ctx.arc(0, 0, player.w/2, 0, Math.PI*2); ctx.fill();
-                    ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke();
-                    ctx.fillStyle = player.color2; ctx.beginPath(); ctx.arc(0, 0, player.w/3.5, 0, Math.PI*2); ctx.fill();
-                    ctx.fillStyle = '#fff'; ctx.fillRect(-2, -player.w/2, 4, player.w);
-                }
-                else if (player.mode === 'wave') {
-                    ctx.fillStyle = player.color1; ctx.beginPath(); ctx.moveTo(25, 0); ctx.lineTo(-25, -20); ctx.lineTo(-12, 0); ctx.lineTo(-25, 20); ctx.closePath(); ctx.fill();
-                    ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke();
-                    ctx.fillStyle = player.color2; ctx.beginPath(); ctx.arc(-6, 0, 6, 0, Math.PI*2); ctx.fill();
-                }
-                ctx.globalAlpha = 1.0;
+                drawIcon(player.mode, player.w, player.color1, player.color2);
                 ctx.restore();
             }
 
-            particles.forEach(p => {
-                if(p.life > 0) { ctx.globalAlpha = p.life; ctx.fillStyle = p.color; ctx.fillRect(p.x, p.y, p.size, p.size); }
-            });
+            if (gameOver) {
+                const t = (now - deathAt) / 1000;
+                if (t < 0.5) {
+                    ctx.beginPath(); ctx.arc(player.x + player.w / 2, player.y + player.h / 2, 20 + t * 700, 0, 7);
+                    ctx.lineWidth = 14 * (1 - t * 2) + 1; ctx.strokeStyle = `rgba(255,255,255,${1 - t * 2})`; ctx.stroke();
+                }
+            }
+
+            particles.forEach(p => { if (p.life > 0) { ctx.globalAlpha = p.life; ctx.fillStyle = p.color; ctx.fillRect(p.x, p.y, p.size, p.size); } });
             ctx.globalAlpha = 1.0;
             ctx.restore();
 
-            if (gameOver || levelComplete) {
-                ctx.fillStyle = 'rgba(0, 0, 0, 0.5)'; ctx.fillRect(0, 0, canvas.width, canvas.height);
-                ctx.fillStyle = levelComplete ? '#00FF00' : 'white';
-                ctx.font = '70px Righteous'; ctx.textAlign = 'center';
-                ctx.fillText(levelComplete ? 'LEVEL COMPLETE!' : 'CRASHED!', canvas.width / 2, canvas.height / 2);
-                ctx.font = '28px Righteous'; ctx.fillStyle = 'white';
-                ctx.fillText('Click or W/Space/Up to retry', canvas.width / 2, canvas.height / 2 + 50);
+            if (levelComplete) {
+                ctx.fillStyle = 'rgba(0,0,0,0.45)'; ctx.fillRect(0, 0, W, H);
+                gdText('Level Complete!', W / 2, H * 0.35, Math.min(90, W / 12), '#ffe94a');
+                gdText('Attempts: ' + attempts, W / 2, H * 0.5, 40);
+                gdText('Coins: ' + coinsCollected, W / 2, H * 0.58, 40, '#ffd700');
+                gdText('Click to continue', W / 2, H * 0.72, 28, '#9dff5a');
             }
         }
 
@@ -826,6 +1152,301 @@
         }
 
         function drawMenuBackground() { ctx.fillStyle = '#111'; ctx.fillRect(0, 0, canvas.width, canvas.height); }
+
+        // --- GD-style menu art ---
+        const PLUS = (icon, n) => `<svg viewBox="0 0 120 120"><defs>
+            <linearGradient id="gp${n}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c6ff5a"/><stop offset="1" stop-color="#37a81a"/></linearGradient>
+            <linearGradient id="gc${n}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5ff4f4"/><stop offset="1" stop-color="#0aa0b4"/></linearGradient>
+            <linearGradient id="gy${n}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff25a"/><stop offset="1" stop-color="#ff9d00"/></linearGradient>
+            <path id="pp${n}" d="M40 6H80V40H114V80H80V114H40V80H6V40H40Z"/></defs>
+            ${[[8, 8], [76, 8], [8, 76], [76, 76]].map(([x, y]) => `<rect x="${x}" y="${y}" width="36" height="36" fill="url(#gc${n})" stroke="#000" stroke-width="7"/><rect x="${x}" y="${y}" width="36" height="36" fill="none" stroke="#fff" stroke-width="3"/>`).join('')}
+            <use href="#pp${n}" fill="#000" stroke="#000" stroke-width="9" stroke-linejoin="round"/><use href="#pp${n}" fill="url(#gp${n})" stroke="#fff" stroke-width="4" stroke-linejoin="round"/>${icon(n)}</svg>`;
+        const ICONS = [
+            n => `<path d="M44 34L88 60L44 86Z" fill="url(#gy${n})" stroke="#000" stroke-width="5" stroke-linejoin="round"/>`,
+            n => `<rect x="36" y="36" width="48" height="48" fill="url(#gy${n})" stroke="#000" stroke-width="5"/><rect x="46" y="48" width="9" height="9" fill="#000"/><rect x="65" y="48" width="9" height="9" fill="#000"/><rect x="46" y="68" width="28" height="6" fill="#000"/>`,
+            n => `<path d="M40 84L82 36M80 84L38 36" stroke="#000" stroke-width="13" stroke-linecap="round"/><path d="M40 84L82 36M80 84L38 36" stroke="url(#gy${n})" stroke-width="7" stroke-linecap="round"/>`
+        ];
+        ['btnPlayMain', 'btnIconKit', 'btnEditor'].forEach((id, n) => { document.getElementById(id).innerHTML = PLUS(ICONS[n], n); });
+        document.documentElement.style.setProperty('--panels', 'url("data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="1064" height="430"><rect width="1064" height="430" fill="#4ee614"/>' + PANELS.map(([x, y, w, h]) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="#2fb229"/><rect x="${x}" y="${y + h - 6}" width="${w}" height="6" fill="#238c20"/><rect x="${x + w - 6}" y="${y}" width="6" height="${h}" fill="#238c20"/>`).join('') + '</svg>') + '")');
+
+        // --- Editor triggers (like real GD): they fire when the player passes them ---
+        const TRIG = { trig_bg: ['BG', '#3a4bff'], trig_ground: ['GND', '#0a1ac7'], trig_pulse: ['PLS', '#ff2d95'], trig_shake: ['SHK', '#8d6e63'], trig_zoom: ['ZM', '#26a69a'], trig_alpha: ['ALP', '#9e9e9e'] };
+        function resetFx() { fx = { bg: [58, 75, 255], gr: [10, 26, 199], pulse: 0, pulseCol: [255, 255, 255], shakeT: 0, shakeS: 0, zoom: 1, alpha: 1, tw: [] }; }
+        function hexRGB(h) { return [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16) || 0); }
+        function tween(k, to, sec) {
+            const f = fx[k]; fx.tw = fx.tw.filter(t => t.k !== k);
+            fx.tw.push({ k, from: Array.isArray(f) ? f.slice() : f, to, t: 0, d: Math.max(1, sec * 60) });
+        }
+        function fireTrig(o) {
+            o.fired = true;
+            const d = o.dur || 0, v = +o.val, c = hexRGB(o.color || '#ffffff');
+            if (o.type === 'trig_bg') tween('bg', c, d);
+            else if (o.type === 'trig_ground') tween('gr', c, d);
+            else if (o.type === 'trig_pulse') { fx.pulseCol = c; fx.pulse = 1; tween('pulse', 0, d || 0.5); }
+            else if (o.type === 'trig_shake') { fx.shakeT = Math.max(1, d * 60); fx.shakeS = v || 8; }
+            else if (o.type === 'trig_zoom') tween('zoom', Math.min(3, Math.max(0.4, v || 1)), d);
+            else if (o.type === 'trig_alpha') tween('alpha', Math.min(1, Math.max(0, isNaN(v) ? 1 : v)), d);
+        }
+        function stepFx() {
+            fx.tw = fx.tw.filter(t => {
+                t.t++; const p = Math.min(1, t.t / t.d);
+                fx[t.k] = Array.isArray(t.to) ? t.to.map((x, i) => t.from[i] + (x - t.from[i]) * p) : t.from + (t.to - t.from) * p;
+                return p < 1;
+            });
+            if (fx.shakeT > 0) { fx.shakeT--; screenShake = Math.max(screenShake, fx.shakeS); }
+        }
+        function drawTrig(o, w, h) {
+            const [lab, col] = TRIG[o.type] || ['?', '#888'], hasCol = o.type === 'trig_bg' || o.type === 'trig_ground' || o.type === 'trig_pulse';
+            ctx.fillStyle = '#000'; ctx.fillRect(-w/2 + 4, -h/2 + 4, w - 8, h - 8);
+            ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.strokeRect(-w/2 + 4, -h/2 + 4, w - 8, h - 8);
+            ctx.fillStyle = hasCol && o.color ? o.color : col; ctx.fillRect(-w/2 + 9, -h/2 + 9, w - 18, 13);
+            ctx.textAlign = 'center'; ctx.fillStyle = '#fff'; ctx.font = '13px ' + FONT; ctx.fillText(lab, 0, 8);
+            ctx.fillStyle = '#ccc'; ctx.font = '10px ' + FONT; ctx.fillText((o.dur || 0) + 's', 0, 19);
+        }
+        function trigProps() { return { rotation: 0, color: document.getElementById('trigColor').value, dur: +document.getElementById('trigDur').value || 0, val: +document.getElementById('trigVal').value }; }
+        const TVAL = { trig_shake: [8, 'Shake strength'], trig_zoom: [1.5, 'Zoom (1 = normal)'], trig_alpha: [0.3, 'Opacity 0-1'] };
+        document.querySelectorAll('.tool-btn[data-tool^="trig_"]').forEach(b => b.addEventListener('click', () => {
+            const v = TVAL[b.dataset.tool], inp = document.getElementById('trigVal');
+            if (v) { inp.value = v[0]; inp.title = v[1]; }
+        }));
+        document.getElementById('toolPublish').addEventListener('click', () => {
+            const n = customLevelData.length, t = customLevelData.filter(o => o.type.startsWith('trig_')).length;
+            const secs = n ? (Math.max(...customLevelData.map(o => o.x)) + 250) / 660 : 0;
+            document.getElementById('pubStats').innerText = `Objects: ${n}   Triggers: ${t}   Length: ~${Math.round(secs)}s`;
+            document.getElementById('publishUI').classList.remove('hidden');
+        });
+        document.getElementById('btnClosePublish').addEventListener('click', () => document.getElementById('publishUI').classList.add('hidden'));
+        resetFx();
+
+        // ================= GD-style level editor + multiple saved levels =================
+        const $e = id => document.getElementById(id) || document.createElement('i');
+        const on = (id, fn) => { $e(id).onclick = fn; };
+        let myLevels = [], curLvl = -1, playFrom = 'list', hist = [], histI = 0, sel = new Set(), edMode = 'build', buildTool = 'block';
+        let swipe = false, showGrid = true, hideTrig = false, autoSave = true, esfx = true, step = 1, clip = [], catIdx = 0, dragging = false, lastCell = '', scrubbing = false, edRaf = 0;
+        const vol = { music: 1, sfx: 1, ed: 1 };
+        const KEY = 'cubeEvadersLevels';
+        try { myLevels = JSON.parse(localStorage.getItem(KEY)) || []; } catch (e) { myLevels = []; }
+        if (!Array.isArray(myLevels)) myLevels = [];
+        const persist = () => { try { localStorage.setItem(KEY, JSON.stringify(myLevels)); } catch (e) {} };
+        const clone = o => JSON.parse(JSON.stringify(o));
+        const showEl = id => $e(id).classList.remove('hidden'), hideEl = id => $e(id).classList.add('hidden');
+        const defSet = () => ({ bg: '#3a4bff', gr: '#0a1ac7', mode: 'cube', speed: 0 });
+        const tall = o => o.type.startsWith('portal') || o.type.startsWith('speed');
+        const objAt = (gx, gy) => customLevelData.find(o => o.x === gx && (o.gridY === gy || (tall(o) && gy > o.gridY && gy <= o.gridY + 2)));
+        const edRect = (o, g) => { const t = tall(o), s = o.type.startsWith('orb_') || o.type === 'coin', p = o.type.startsWith('pad_'); return [o.x, g - SIZE * o.gridY - (t ? 100 : 0) + (p ? SIZE - 12 : 0) + (s ? 5 : 0), t || s ? 40 : SIZE, t ? 150 : s ? 40 : p ? 12 : SIZE]; };
+        const maxX = () => customLevelData.reduce((m, o) => Math.max(m, o.x), 0);
+        const edScrub = $e('edScrub');
+        const cellAt = e => [Math.floor((e.clientX + editorCameraX) / SIZE) * SIZE, Math.ceil((canvas.height - FLOOR_HEIGHT - e.clientY) / SIZE)];
+
+        function toast(msg) {
+            let t = document.getElementById('toast');
+            if (!t) { t = document.createElement('div'); t.id = 'toast'; t.style.cssText = 'position:fixed;left:50%;top:12vh;transform:translateX(-50%);z-index:80;background:rgba(0,0,0,.8);color:#fff;font-family:var(--gd);font-size:3vh;padding:1vh 2vw;border:.4vh solid #fff;border-radius:1.2vh;pointer-events:none'; document.body.appendChild(t); }
+            t.textContent = msg; t.style.display = 'block'; clearTimeout(t._h); t._h = setTimeout(() => { t.style.display = 'none'; }, 2200);
+        }
+        function twoStep(btn, fn) {
+            btn.onclick = () => {
+                if (btn.dataset.s) { delete btn.dataset.s; btn.innerHTML = btn.dataset.t; fn(); return; }
+                btn.dataset.s = 1; btn.dataset.t = btn.innerHTML; btn.innerHTML = 'Sure?';
+                setTimeout(() => { if (btn.dataset.s) { delete btn.dataset.s; btn.innerHTML = btn.dataset.t; } }, 2500);
+            };
+        }
+
+        // ----- saved levels -----
+        const saveCur = () => { if (myLevels[curLvl]) { myLevels[curLvl].data = clone(customLevelData); persist(); } };
+        function commit() { hist = hist.slice(0, histI + 1); hist.push(JSON.stringify(customLevelData)); if (hist.length > 100) hist.shift(); histI = hist.length - 1; if (autoSave) saveCur(); }
+        function undo(d) { const n = histI + d; if (n < 0 || n >= hist.length) return; histI = n; customLevelData = JSON.parse(hist[n]); sel = new Set(); if (autoSave) saveCur(); }
+        function showLevels() { cancelAnimationFrame(animationId); hideEl('edPauseUI'); hideEl('edSettingsUI'); gameState = 'levels'; switchScreen('myLevels'); renderLevels(); }
+        function renderLevels() {
+            const L = $e('lvList'); L.innerHTML = myLevels.length ? '' : '<div class="lv-empty">No levels yet. Press New Level to start building!</div>';
+            myLevels.forEach((lv, i) => {
+                const r = document.createElement('div'); r.className = 'lv-row';
+                r.innerHTML = '<input class="lv-name" maxlength="22"><span class="lv-info"></span><button class="btn sm">Edit</button><button class="btn sm btn-blue">Play</button><button class="btn sm btn-red">Delete</button>';
+                const nm = r.querySelector('.lv-name'); nm.value = lv.name; nm.oninput = () => { lv.name = nm.value; persist(); };
+                r.querySelector('.lv-info').textContent = lv.data.length + ' objects';
+                const [bE, bP, bD] = r.querySelectorAll('button');
+                bE.onclick = () => openEditor(i);
+                bP.onclick = () => { customLevelData = clone(lv.data); curLvl = i; playFrom = 'list'; playingCustom = true; startGame(true); };
+                twoStep(bD, () => { myLevels.splice(i, 1); persist(); renderLevels(); });
+                L.appendChild(r);
+            });
+        }
+        function openEditor(i) {
+            curLvl = i; const lv = myLevels[i]; lv.settings = lv.settings || defSet();
+            customLevelData = clone(lv.data); hist = [JSON.stringify(customLevelData)]; histI = 0; sel = new Set(); editorCameraX = 0;
+            $e('editorUI').classList.remove('uioff'); setMode('build'); gameState = 'editor'; switchScreen('editor'); drawEditor();
+        }
+        function backFromPlay() { cancelAnimationFrame(animationId); if (playFrom === 'editor') { gameState = 'editor'; switchScreen('editor'); drawEditor(); } else showLevels(); }
+        on('lvNew', () => { myLevels.push({ name: 'Unnamed ' + (myLevels.length + 1), data: [], settings: defSet() }); persist(); openEditor(myLevels.length - 1); });
+        on('lvBack', () => { gameState = 'menu'; switchScreen('menu'); });
+
+        // ----- icons -----
+        const I = {
+            undo: '<svg viewBox="0 0 32 32" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7L5 13l7 6"/><path d="M5 13h12a8 8 0 010 16h-4"/></svg>',
+            trash: '<svg viewBox="0 0 32 32" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9h20M12 9V5h8v4M9 9l1.5 19h11L23 9M14 14v10M18 14v10"/></svg>',
+            eye: '<svg viewBox="0 0 32 32" fill="none" stroke="#fff" stroke-width="3" stroke-linejoin="round"><path d="M2 16s5-9 14-9 14 9 14 9-5 9-14 9S2 16 2 16z"/><circle cx="16" cy="16" r="4.5"/></svg>',
+            gear: '<svg viewBox="0 0 32 32" fill="none" stroke="#fff"><circle cx="16" cy="16" r="8" stroke-width="5"/><circle cx="16" cy="16" r="13" stroke-width="4" stroke-dasharray="4.3 4.3"/></svg>',
+            pause: '<svg viewBox="0 0 32 32" fill="#fff"><rect x="7" y="5" width="7" height="22" rx="1.5"/><rect x="18" y="5" width="7" height="22" rx="1.5"/></svg>',
+            play: '<svg viewBox="0 0 32 32"><path d="M8 4l20 12L8 28z" fill="#ffe83a" stroke="#000" stroke-width="2.6" stroke-linejoin="round"/></svg>'
+        };
+        const ARW = deg => `<svg viewBox="0 0 32 32" style="transform:rotate(${deg}deg)"><path d="M16 3L30 27H2z" fill="#7dff2a" stroke="#fff" stroke-width="2.5" stroke-linejoin="round"/></svg>`;
+        const ICO = {
+            block: '<rect x="3" y="3" width="26" height="26" fill="#000" stroke="#fff" stroke-width="2.5"/>',
+            spike: '<path d="M16 4L29 28H3z" fill="#000" stroke="#fff" stroke-width="2.5" stroke-linejoin="round"/>',
+            orb_yellow: '<circle cx="16" cy="16" r="10" fill="#ffeb3b55" stroke="#ffeb3b" stroke-width="3"/><circle cx="16" cy="16" r="4" fill="#fff"/>',
+            orb_pink: '<circle cx="16" cy="16" r="10" fill="#ff66ff55" stroke="#ff66ff" stroke-width="3"/><circle cx="16" cy="16" r="4" fill="#fff"/>',
+            pad_yellow: '<path d="M3 25a13 11 0 0126 0z" fill="#ffeb3b"/>',
+            pad_pink: '<path d="M3 25a13 11 0 0126 0z" fill="#ff66ff"/>',
+            coin: '<circle cx="16" cy="16" r="11" fill="#ffd33a" stroke="#000" stroke-width="3"/>',
+            speed_normal: '<path d="M10 6l10 10-10 10" fill="none" stroke="#4caf50" stroke-width="5"/>',
+            speed_fast: '<path d="M5 6l9 10-9 10M16 6l9 10-9 10" fill="none" stroke="#e91e63" stroke-width="4"/>'
+        };
+        const ico = t => '<svg viewBox="0 0 32 32">' + (ICO[t] || (PCOL[t] ? `<ellipse cx="16" cy="16" rx="7" ry="13" fill="${PCOL[t]}44" stroke="${PCOL[t]}" stroke-width="3.5"/>` : `<rect x="4" y="4" width="24" height="24" rx="3" fill="#000" stroke="#fff" stroke-width="2"/><rect x="8" y="8" width="16" height="7" fill="${(TRIG[t] || [0, '#888'])[1]}"/><text x="16" y="25" font-size="8" fill="#fff" text-anchor="middle" font-family="sans-serif">${(TRIG[t] || ['?'])[0]}</text>`)) + '</svg>';
+        $e('edUndo').innerHTML = I.undo; $e('edRedo').innerHTML = I.undo; $e('edRedo').firstChild.style.transform = 'scaleX(-1)';
+        $e('edTrash').innerHTML = I.trash; $e('edEye').innerHTML = I.eye; $e('edGear').innerHTML = I.gear; $e('edPause').innerHTML = I.pause; $e('edPlay').innerHTML = I.play; $e('dlSel').innerHTML = I.trash;
+        $e('edHelp').textContent = '?';
+
+        // ----- build tab -----
+        const CATS = [['block', 'spike'], ['orb_yellow', 'orb_pink', 'pad_yellow', 'pad_pink'], ['portal_cube', 'portal_ship', 'portal_ufo', 'portal_ball', 'portal_wave', 'portal_grav_up', 'portal_grav_down'], ['speed_normal', 'speed_fast'], ['trig_bg', 'trig_ground', 'trig_pulse', 'trig_shake', 'trig_zoom', 'trig_alpha'], ['coin']];
+        function buildGrid() {
+            const row = $e('catRow'), grid = $e('obGrid'); row.innerHTML = ''; grid.innerHTML = '';
+            CATS.forEach((c, i) => { const b = document.createElement('button'); b.className = 'cat' + (i === catIdx ? ' on' : ''); b.innerHTML = ico(c[0]); b.onclick = () => { catIdx = i; buildGrid(); }; row.appendChild(b); });
+            CATS[catIdx].forEach(t => { const b = document.createElement('button'); b.className = 'ob' + (t === buildTool ? ' on' : ''); b.title = t.replace(/_/g, ' '); b.innerHTML = ico(t); b.onclick = () => pickTool(t); grid.appendChild(b); });
+            $e('trigSet').classList.toggle('hidden', catIdx !== 4);
+        }
+        function pickTool(t) { buildTool = currentTool = t; const v = TVAL[t]; if (v) { $e('trigVal').value = v[0]; $e('trigVal').title = v[1]; } buildGrid(); }
+        function setMode(m) {
+            edMode = m; document.querySelectorAll('.tab').forEach(t => t.classList.toggle('on', t.dataset.mode === m));
+            ['Build', 'Edit', 'Delete', 'View'].forEach(k => $e('p' + k).classList.toggle('hidden', k.toLowerCase() !== m));
+            $e('catRow').style.display = m === 'build' ? 'flex' : 'none'; if (m !== 'edit') sel = new Set();
+        }
+        document.querySelectorAll('.tab').forEach(t => t.onclick = () => setMode(t.dataset.mode));
+
+        // ----- edit / delete / view -----
+        function moveSel(dx, dy) { if (!sel.size) return; sel.forEach(o => { o.x = Math.max(0, o.x + dx * SIZE * step); o.gridY = Math.max(1, Math.min(11, o.gridY + dy * step)); }); commit(); }
+        function rotSel(d) { if (!sel.size) return; sel.forEach(o => { o.rotation = (((o.rotation || 0) + d) % 360 + 360) % 360; }); commit(); }
+        function delSel() { if (!sel.size) return; customLevelData = customLevelData.filter(o => !sel.has(o)); sel = new Set(); commit(); }
+        function pasteSel(after) {
+            if (!clip.length) return;
+            const mn = Math.min(...clip.map(o => o.x)), mx = Math.max(...clip.map(o => o.x));
+            const base = after ? mx + SIZE : Math.floor((editorCameraX + canvas.width / 2) / SIZE) * SIZE;
+            const add = clone(clip).map(o => ({ ...o, x: o.x - mn + base }));
+            customLevelData = customLevelData.filter(o => !add.some(a => a.x === o.x && a.gridY === o.gridY));
+            customLevelData.push(...add); sel = new Set(add); commit();
+        }
+        document.querySelectorAll('[data-mv]').forEach(b => { const [dx, dy] = b.dataset.mv.split(',').map(Number); b.innerHTML = ARW(dy > 0 ? 0 : dy < 0 ? 180 : dx > 0 ? 90 : 270); b.onclick = () => moveSel(dx, dy); });
+        on('stepTxt', () => { step = step === 1 ? 2 : step === 2 ? 4 : 1; $e('stepTxt').textContent = step; });
+        on('edRotL', () => rotSel(-90)); on('edRotR', () => rotSel(90)); on('edFlip', () => rotSel(180));
+        on('edTrash', delSel); on('dlSel', delSel);
+        twoStep($e('dlAll'), () => { customLevelData = []; sel = new Set(); commit(); });
+        twoStep($e('dlTrig'), () => { customLevelData = customLevelData.filter(o => !o.type.startsWith('trig_')); sel = new Set(); commit(); });
+        const setGrid = v => { showGrid = v; $e('edGrid').classList.toggle('on', v); $e('vwGrid').classList.toggle('on', v); };
+        on('edGrid', () => setGrid(!showGrid)); on('vwGrid', () => setGrid(!showGrid));
+        on('vwTrig', () => { hideTrig = !hideTrig; $e('vwTrig').classList.toggle('on', hideTrig); });
+        on('edSwipe', () => { swipe = !swipe; $e('edSwipe').classList.toggle('on', swipe); });
+        on('edUndo', () => undo(-1)); on('edRedo', () => undo(1));
+        on('edEye', () => $e('editorUI').classList.toggle('uioff'));
+        on('edHelp', () => $e('editorControlsText').classList.toggle('hidden'));
+        on('edPlay', () => { playFrom = 'editor'; $e('toolPlay').click(); });
+        edScrub.oninput = () => { editorCameraX = +edScrub.value; };
+        edScrub.onpointerdown = () => { scrubbing = true; };
+        window.addEventListener('pointerup', () => { scrubbing = false; dragging = false; const a = document.activeElement; if (a && (a.tagName === 'BUTTON' || a === edScrub)) a.blur(); });
+
+        const RB = [['Copy', '#8e5cc4', () => { clip = clone([...sel]); }], ['Paste', '#2aa5b8', () => pasteSel(0)], ['Copy+Paste', '#b8864a', () => { clip = clone([...sel]); pasteSel(1); }],
+            ['Edit Special', '#2e9a9a'], ['Edit Group', '#b5533a'], ['Edit Object', '#3a5aa8'], ['Copy Values', '#8e5cc4'], ['Paste State', '#2e9a5a'], ['Paste Color', '#2b6cc0'],
+            ['Color', '#5a6070'], ['Go To Layer', '#5a6070'], ['Deselect', '#2e9a5a', () => { sel = new Set(); }]];
+        RB.forEach(([lab, col, fn]) => { const b = document.createElement('button'); b.className = 'rb' + (fn ? '' : ' stub'); b.style.background = col; b.innerHTML = lab.replace(' ', '<br>'); if (fn) b.onclick = fn; else b.title = 'Coming soon'; $e('edRight').appendChild(b); });
+
+        // ----- canvas clicks -----
+        function sfxTick() { if (!esfx) return; try { if (!AC) AC = new (window.AudioContext || window.webkitAudioContext)(); AC.resume(); note(660, AC.currentTime, 0.06, 'square', 0.05, 330, 'ed'); } catch (e) {} }
+        function handleEditorClick(e) {
+            const [gx, gy] = cellAt(e); if (gy < 1) return;
+            const hit = objAt(gx, gy);
+            if (edMode === 'build') {
+                customLevelData = customLevelData.filter(o => !(o.x === gx && o.gridY === gy));
+                customLevelData.push({ type: currentTool, x: gx, gridY: gy, rotation: currentRotation, ...(currentTool.startsWith('trig_') ? trigProps() : {}) });
+            } else if (edMode === 'delete') {
+                if (!hit) return; customLevelData = customLevelData.filter(o => o !== hit);
+            } else if (edMode === 'edit') {
+                if (!hit) { if (!swipe && !e.shiftKey) sel = new Set(); return; }
+                if (swipe || e.shiftKey) { if (sel.has(hit)) sel.delete(hit); else sel.add(hit); } else sel = new Set([hit]);
+                return;
+            } else return;
+            commit(); sfxTick();
+        }
+        window.addEventListener('mousemove', e => {
+            if (!dragging || !swipe || gameState !== 'editor' || e.target !== canvas) return;
+            const k = cellAt(e).join(','); if (k === lastCell) return; lastCell = k; handleEditorClick(e);
+        });
+
+        // ----- pause menu, settings -----
+        function openPause() {
+            const n = customLevelData.length, secs = n ? Math.round((maxX() + 250) / 660) : 0;
+            $e('edObjs').textContent = `Objects: ${n}/40000`;
+            $e('edLenTxt').textContent = `Length: ${secs} seconds (${secs < 10 ? 'Tiny' : secs < 30 ? 'Short' : secs < 60 ? 'Medium' : secs < 120 ? 'Long' : 'XL'})`;
+            showEl('edPauseUI');
+        }
+        on('edPause', openPause); on('pmResume', () => hideEl('edPauseUI'));
+        on('pmSave', () => { saveCur(); $e('pmSave').textContent = 'Saved!'; setTimeout(() => { $e('pmSave').textContent = 'Save'; }, 900); });
+        on('pmSavePlay', () => { saveCur(); hideEl('edPauseUI'); playFrom = 'editor'; $e('toolPlay').click(); });
+        on('pmSaveExit', () => { saveCur(); showLevels(); });
+        on('pmExit', () => showLevels());
+        on('pmSettings', () => { hideEl('edPauseUI'); openSettings(); });
+        on('pmExport', () => $e('toolSave').click()); on('pmImport', () => $e('toolLoad').click());
+        on('pmESfx', () => { esfx = !esfx; $e('esfxIco').textContent = esfx ? 'ON' : 'OFF'; });
+        on('pmAuto', () => { autoSave = !autoSave; $e('autoIco').textContent = autoSave ? 'ON' : 'OFF'; });
+        on('pmHelp', () => $e('editorControlsText').classList.toggle('hidden'));
+        $e('volMusic').oninput = e => { vol.music = +e.target.value; }; $e('volSfx').oninput = e => { vol.sfx = +e.target.value; }; $e('volEd').oninput = e => { vol.ed = +e.target.value; };
+        const MODES = ['cube', 'ship', 'ball', 'ufo', 'wave'];
+        const MODE_SVG = { cube: '<rect x="6" y="6" width="20" height="20" fill="#fff" stroke="#000" stroke-width="3"/><rect x="12" y="12" width="8" height="8" fill="#888" stroke="#000" stroke-width="2"/>', ship: '<path d="M3 21l5 6h16l5-8z" fill="#fff" stroke="#000" stroke-width="3" stroke-linejoin="round"/><rect x="11" y="6" width="10" height="11" fill="#fff" stroke="#000" stroke-width="3"/>', ball: '<circle cx="16" cy="16" r="11" fill="#fff" stroke="#000" stroke-width="3"/>', ufo: '<ellipse cx="16" cy="21" rx="13" ry="6" fill="#fff" stroke="#000" stroke-width="3"/><path d="M9 19a7 8 0 0114 0z" fill="#fff" stroke="#000" stroke-width="3"/>', wave: '<path d="M4 24L28 16L4 8l7 8z" fill="#fff" stroke="#000" stroke-width="3" stroke-linejoin="round"/>' };
+        function refreshSet() {
+            const s = myLevels[curLvl].settings;
+            $e('setSpeed').innerHTML = `<svg viewBox="0 0 32 32" fill="none" stroke="#2ff" stroke-width="5"><path d="${s.speed ? 'M5 5l11 11L5 27M17 5l11 11-11 11' : 'M10 5l11 11-11 11'}"/></svg>`;
+            $e('setMode').innerHTML = `<svg viewBox="0 0 32 32">${MODE_SVG[s.mode]}</svg>`;
+            $e('pvBg').style.background = s.bg; $e('pvGr').style.background = `linear-gradient(${s.gr}, #000)`;
+        }
+        function openSettings() { const s = myLevels[curLvl].settings = myLevels[curLvl].settings || defSet(); $e('setBg').value = s.bg; $e('setGr').value = s.gr; refreshSet(); showEl('edSettingsUI'); }
+        on('edGear', openSettings);
+        on('setOk', () => { persist(); hideEl('edSettingsUI'); });
+        $e('setBg').oninput = e => { myLevels[curLvl].settings.bg = e.target.value; persist(); refreshSet(); };
+        $e('setGr').oninput = e => { myLevels[curLvl].settings.gr = e.target.value; persist(); refreshSet(); };
+        on('setSpeed', () => { const s = myLevels[curLvl].settings; s.speed ^= 1; persist(); refreshSet(); });
+        on('setMode', () => { const s = myLevels[curLvl].settings; s.mode = MODES[(MODES.indexOf(s.mode) + 1) % MODES.length]; persist(); refreshSet(); });
+        window.addEventListener('keydown', e => {
+            if (gameState !== 'editor' || e.target.tagName === 'INPUT') return;
+            if (e.code === 'Escape') { if (!$e('edSettingsUI').classList.contains('hidden')) hideEl('edSettingsUI'); else if (!$e('edPauseUI').classList.contains('hidden')) hideEl('edPauseUI'); else openPause(); }
+            else if ((e.ctrlKey || e.metaKey) && e.code === 'KeyZ') { undo(e.shiftKey ? 1 : -1); e.preventDefault(); }
+            else if ((e.ctrlKey || e.metaKey) && e.code === 'KeyY') undo(1);
+            else if ((e.ctrlKey || e.metaKey) && e.code === 'KeyC') { if (sel.size) clip = clone([...sel]); }
+            else if ((e.ctrlKey || e.metaKey) && e.code === 'KeyV') { pasteSel(0); e.preventDefault(); }
+            else if ((e.ctrlKey || e.metaKey) && e.code === 'KeyD') { if (sel.size) { clip = clone([...sel]); pasteSel(1); } e.preventDefault(); }
+            else if ((e.ctrlKey || e.metaKey) && e.code === 'KeyA' && edMode === 'edit') { sel = new Set(customLevelData); e.preventDefault(); }
+            else if (e.code === 'Delete' || e.code === 'Backspace') delSel();
+        });
+        buildGrid(); setMode('build');
+
+        // --- GD-style audio (synthesized) ---
+        function note(f, t, d, type, v, f2, bus = 'music') {
+            const o = AC.createOscillator(), g = AC.createGain();
+            o.type = type; o.frequency.setValueAtTime(f, t);
+            if (f2) o.frequency.exponentialRampToValueAtTime(f2, t + d);
+            g.gain.setValueAtTime(Math.max(v * vol[bus], 0.0001), t); g.gain.exponentialRampToValueAtTime(0.001, t + d);
+            o.connect(g); g.connect(AC.destination); o.start(t); o.stop(t + d);
+        }
+        function startMusic() {
+            if (!AC) AC = new (window.AudioContext || window.webkitAudioContext)();
+            AC.resume(); mStep = 0;
+            if (!mOn) { mOn = true; setInterval(musicTick, 115); }
+        }
+        function musicTick() {
+            if (gameState !== 'playing' || gameOver || levelComplete) return;
+            const t = AC.currentTime, s = mStep++ % 16, b = [55, 55, 73, 55, 65, 65, 98, 82][s >> 1];
+            if (s % 4 === 0) note(140, t, 0.18, 'sine', 0.55, 40);
+            if (s % 4 === 2) note(7000, t, 0.04, 'square', 0.03);
+            note(b, t, 0.11, 'sawtooth', 0.13);
+            if (s % 2 === 0) note(b * 4 * [1, 1.5, 2, 1.5][(s >> 1) & 3], t, 0.09, 'square', 0.04);
+        }
+        function boom() { if (!AC) return; const t = AC.currentTime; note(200, t, 0.45, 'sawtooth', 0.5, 30, 'sfx'); note(100, t, 0.5, 'square', 0.3, 25, 'sfx'); }
+
     </script>
 </body>
 </html>
